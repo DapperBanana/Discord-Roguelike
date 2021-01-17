@@ -41,9 +41,10 @@ async def create_map(ctx):
     i = 1
     with open('level.txt', 'r') as f:
         for c in blocks(f, 64):
-            message = "Row " + str(i) + " complete!"
-            await ctx.channel.send(message)
-            print(c)
+            row_value = "Row " + str(i) + " complete!"
+            print(row_value)
+            map_row = str(c)
+            await ctx.channel.send("`{}`".format(map_row))
             i += 1
 
     await ctx.send('Map Created!')
