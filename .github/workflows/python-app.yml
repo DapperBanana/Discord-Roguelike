@@ -21,4 +21,11 @@ jobs:
     - name: kill the existing python scripts
       run: pkill -f dungeon-bot.py
     - name: start the dungeon-bot 
-      run: python --version
+      run: |
+        cp dungeon-bot.py /home/pi/Documents/discord-bot/Discord-Roguelike-main/dungeon-bot.py
+        cp engine.py /home/pi/Documents/discord-bot/Discord-Roguelike-main/engine.py
+        cp start_screen_1.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_1.txt
+        cp start_screen_2.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_2.txt
+        cp start_screen_3.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_3.txt
+        cp start_screen_4.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_4.txt
+        bash start-discord-bot.sh
