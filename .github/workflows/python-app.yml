@@ -15,3 +15,10 @@ jobs:
     steps:
     - name: Display Python version
       run: python --version
+  deployment:
+    runs-on: self-hosted
+    steps:
+    - name: kill the existing python scripts
+      run: pkill -f dungeon-bot.py
+    - name: start the dungeon-bot 
+      run: python dungeon-bot.py
