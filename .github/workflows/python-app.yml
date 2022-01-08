@@ -28,4 +28,3 @@ jobs:
         cp start_screen_2.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_2.txt
         cp start_screen_3.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_3.txt
         cp start_screen_4.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_4.txt
-        bash start-discord-bot.sh
