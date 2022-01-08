@@ -1,6 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Python application
 
 on:
@@ -9,9 +6,7 @@ on:
 
 jobs:
   build:
-
     runs-on: self-hosted
-
     steps:
     - name: Display Python version
       run: python --version
@@ -20,11 +15,20 @@ jobs:
     steps:
     - name: kill the existing python scripts
       run: pkill -f dungeon-bot.py
-    - name: start the dungeon-bot 
+    #First we're going to checkout the repo
+    - uses: actions/checkout@v2
+    - name: build the directory
       run: |
-        cp dungeon-bot.py /home/pi/Documents/discord-bot/Discord-Roguelike-main/dungeon-bot.py
-        cp engine.py /home/pi/Documents/discord-bot/Discord-Roguelike-main/engine.py
-        cp start_screen_1.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_1.txt
-        cp start_screen_2.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_2.txt
-        cp start_screen_3.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_3.txt
-        cp start_screen_4.txt /home/pi/Documents/discord-bot/Discord-Roguelike-main/start_screen_4.txt
+        mkdir ../build
+        cp -TR . ../build
+        tar -cvf deploy.tar ../build/
+      #full path is /home/pi/Documents/discord-bot/Discord-Roguelike-main/
+    - name: copy files via ssh password
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        source: "deploy.tar"
+        target: "destination/folder"
