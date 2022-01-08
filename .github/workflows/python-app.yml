@@ -21,4 +21,4 @@ jobs:
     - name: kill the existing python scripts
       run: pkill -f dungeon-bot.py
     - name: start the dungeon-bot 
-      run: python dungeon-bot.py
+      run: python --version
