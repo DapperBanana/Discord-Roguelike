@@ -11,13 +11,13 @@ jobs:
     - name: Display Python version
       run: python --version
   deployment:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     
-    - name: kill the existing python scripts
-      run: pkill -f dungeon-bot.py
-      
+    #- name: kill the existing python scripts
+    #  run: pkill -f dungeon-bot.py
+    
     - name: execute remote ssh commands
       uses: appleboy/ssh-action@master
       with:
