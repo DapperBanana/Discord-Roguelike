@@ -18,9 +18,11 @@ jobs:
     - name: kill the existing python scripts
       run: pkill -f dungeon-bot.py
       
-    - name: Run a multi-line script
-      run: |
-        echo ${{ secrets.HOST }}
-        echo ${{ secrets.USERNAME }}
-        echo ${{ secrets.PASSWORD }}
-        echo ${{ secrets.PORT }}
+    - name: execute remote ssh commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: whoami
