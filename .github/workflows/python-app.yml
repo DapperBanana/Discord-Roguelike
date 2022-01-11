@@ -11,17 +11,13 @@ jobs:
     - name: Display Python version
       run: python --version
   deployment:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     
-    #- name: kill the existing python scripts
-    #  run: pkill -f dungeon-bot.py
+    - name: kill the existing python scripts
+      run: pkill -f dungeon-bot.py
     
-    - name: execute remote ssh commands
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: whoami
+    - name: copy the github repo
+      run: git clone https://github.com/Captain-Howard/Discord-Roguelike.git
+    - name: start the discord-bot
+      run: python /home/pi/Discord-Roguelike/dungeon-bot.py &
