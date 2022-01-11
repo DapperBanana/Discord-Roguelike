@@ -12,12 +12,9 @@ jobs:
       run: python --version
   deployment:
     runs-on: self-hosted
-    steps:
-    
-    - name: kill the existing python scripts
-      run: pkill -f dungeon-bot.py
-    
-    - name: copy the github repo
-      run: git clone https://github.com/Captain-Howard/Discord-Roguelike.git
-    - name: start the discord-bot
-      run: python /home/pi/Discord-Roguelike/dungeon-bot.py &
+    steps: 
+    - name: Kill script then clone repo then run bot
+      run: |
+        pkill -f dungeon-bot.py
+        sudo git clone https://github.com/Captain-Howard/Discord-Roguelike.git
+        sudo python /home/pi/Discord-Roguelike/dungeon-bot.py &
