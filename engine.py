@@ -3,6 +3,8 @@ import os.path
 import os
 import glob
 import time
+from map_creator import generate_map
+from game_screen import resolve_screen
 from discord.ext import commands
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -28,7 +30,8 @@ active_command_list = ["w",
                 "logout",
                 "end mission",
                 "exit",
-                "pause"]
+                "pause",
+                "print"]
 
 starting_command_list = [  "login",
                     "continue",
@@ -121,7 +124,12 @@ async def engine(text_input, user_id_info):
     if is_active_user:
         for command in active_command_list:
             if command == text_input.content:
-                await active_commands(text_input, user_id_info)
+                new_text = await active_commands(text_input, user_id_info)
+                if new_text == "print":
+                    await resolve_screen(text_input.author.id)
+                else:
+                    await text_input.channel.send(new_text)
+                
                 return
         #There's a game going on and you are the correct person to be typing
         await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
@@ -158,9 +166,8 @@ async def starting_commands(text_input, user_id_info):
         await text_input.channel.purge(limit=defaultval)
         #create a new active campaign mission
         file_name = "active_" + str(text_input.author.id) + ".txt"
-        f = open(file_name, 'w+')
-        f.write("campaign started")
-        f.close()
+        #here we'll generate a map
+        await generate_map(file_name)
 
         #Now start the credits
         await text_input.channel.send("New campaign started for: " + str(username))
@@ -216,7 +223,7 @@ async def active_commands(text_input, user_id_info):
         new_name = str(text_input.author.id) + ".txt"
         if os.path.exists(file_name):
             os.rename(file_name, new_name)
-            await text_input.channel.send("Campaign has been paused! Until next time!")
+            return "Campaign has been paused! Until next time!"
 
     elif text_input.content == "end mission":
         #end your campaign
@@ -227,9 +234,10 @@ async def active_commands(text_input, user_id_info):
         file_name = "active_" + str(text_input.author.id) + ".txt"
         if os.path.exists(file_name):
             os.remove(file_name)
-            await text_input.channel.send("Campaign has ended! Safe travels")
+            return "Campaign has ended! Safe travels"
     
-    return
+    else:
+        return "print"
 
 if __name__ == '__main__':
     engine()
