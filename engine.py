@@ -32,7 +32,15 @@ active_command_list = ["w",
                 "end mission",
                 "exit",
                 "pause",
-                "print"]
+                "print",
+                "n",
+                "e",
+                "s",
+                "w",
+                "north",
+                "east",
+                "south",
+                "west"]
 
 starting_command_list = [  "login",
                     "continue",
