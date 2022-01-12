@@ -3,6 +3,7 @@ import os.path
 import os
 import glob
 import time
+import numpy
 from map_creator import generate_map
 from game_screen import resolve_screen
 from discord.ext import commands
@@ -125,7 +126,8 @@ async def engine(text_input, user_id_info):
         for command in active_command_list:
             if command == text_input.content:
                 new_text = await active_commands(text_input, user_id_info)
-                if new_text == "print":
+                if new_text == "print" or new_text == "moved":
+                    await text_input.channel.purge(limit=defaultval)
                     await resolve_screen(text_input.author.id)
                     tempfilename = "test_view.txt"
                     f = open(tempfilename, 'r')
@@ -215,8 +217,8 @@ async def starting_commands(text_input, user_id_info):
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 async def active_commands(text_input, user_id_info):
-
-    if text_input.content == "pause":
+    input_command = str(text_input.content).lower()
+    if input_command == "pause":
         #pause your campaign
 
         #clear all old messages
@@ -228,7 +230,7 @@ async def active_commands(text_input, user_id_info):
             os.rename(file_name, new_name)
             return "Campaign has been paused! Until next time!"
 
-    elif text_input.content == "end mission":
+    elif input_command == "end mission":
         #end your campaign
 
         #clear all old messages
@@ -239,10 +241,70 @@ async def active_commands(text_input, user_id_info):
             os.remove(file_name)
             return "Campaign has ended! Safe travels"
     
+    elif input_command == "n" or input_command == "north":
+        await move_player(0, str(text_input.author.id))
+        return "moved"
+    elif input_command == "e" or input_command == "east":
+        await move_player(1, str(text_input.author.id))
+        return "moved"
+    elif input_command == "s" or input_command == "south":
+        await move_player(2, str(text_input.author.id))
+        return "moved"
+    elif input_command == "w" or input_command == "west":
+        await move_player(3, str(text_input.author.id))
+        return "moved"
+    
     else:
         return "print"
 
 if __name__ == '__main__':
     engine()
 
-
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# _______  ___      _______  __   __  _______  ______      __   __  _______  __   __  _______  __   __  _______  __    _  _______ 
+#|       ||   |    |   _   ||  | |  ||       ||    _ |    |  |_|  ||       ||  | |  ||       ||  |_|  ||       ||  |  | ||       |
+#|    _  ||   |    |  |_|  ||  |_|  ||    ___||   | ||    |       ||   _   ||  |_|  ||    ___||       ||    ___||   |_| ||_     _|
+#|   |_| ||   |    |       ||       ||   |___ |   |_||_   |       ||  | |  ||       ||   |___ |       ||   |___ |       |  |   |  
+#|    ___||   |___ |       ||_     _||    ___||    __  |  |       ||  |_|  ||       ||    ___||       ||    ___||  _    |  |   |  
+#|   |    |       ||   _   |  |   |  |   |___ |   |  | |  | ||_|| ||       | |     | |   |___ | ||_|| ||   |___ | | |   |  |   |  
+#|___|    |_______||__| |__|  |___|  |_______||___|  |_|  |_|   |_||_______|  |___|  |_______||_|   |_||_______||_|  |__|  |___|
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+async def move_player(direction, player_name):
+    #First find the player on the map
+    with open("active_" + player_name + ".txt") as f:
+        input_grid = f.readlines()
+    input_grid = [row.rstrip('\n') for row in input_grid]
+    player_x = 0
+    player_y = 0
+    room_width = len(input_grid)
+    room_height = int((len(input_grid[0]) + 1) / 2)
+    #Now that we have the grid let's remove the whitespaces
+    void = "-"
+    grid_array = [[void for i in range(room_height)] for j in range(room_width)]
+    for y in range(0,len(input_grid)-1):
+        for x in range(0,len(input_grid[0])-1):
+            if x % 2 == 0:
+                grid_array[y][int(x/2)] = input_grid[y][x]
+    #Lastly let's find the player x and y
+    for y in range(0,len(grid_array)-1):
+        for x in range(0,len(grid_array[0])-1):
+            if grid_array[y][x] == "&":
+                player_x = x
+                player_y = y
+    
+    #erase the previous location for the player
+    grid_array[player_y][player_x] = " "
+    #next let's move in one of the four possible directions and update the map
+    if direction == 0:
+        player_y -= 1
+    elif direction == 1:
+        player_x += 1
+    elif direction == 2:
+        player_y += 1
+    elif direction == 3:
+        player_x -= 1
+    #update the player location in the active file
+    grid_array[player_y][player_x] = "&"
+    #save it to the active player file
+    file_name = "active_" + str(player_name) + ".txt"
+    numpy.savetxt(file_name, grid_array, fmt='%s')
