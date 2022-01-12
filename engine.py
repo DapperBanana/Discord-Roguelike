@@ -127,6 +127,9 @@ async def engine(text_input, user_id_info):
                 new_text = await active_commands(text_input, user_id_info)
                 if new_text == "print":
                     await resolve_screen(text_input.author.id)
+                    tempfilename = "test_view.txt"
+                    f = open(tempfilename, 'r')
+                    await text_input.channel.send("```" + f.read() + "```")
                 else:
                     await text_input.channel.send(new_text)
                 
