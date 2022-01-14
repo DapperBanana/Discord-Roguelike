@@ -132,7 +132,8 @@ async def engine(text_input, user_id_info):
 
     if is_active_user:
         for command in active_command_list:
-            if command == text_input.content:
+
+            if str(text_input.content).find(command) != -1:
                 new_text = await active_commands(text_input, user_id_info)
                 if new_text == "print" or new_text == "moved":
                     await text_input.channel.purge(limit=defaultval)
