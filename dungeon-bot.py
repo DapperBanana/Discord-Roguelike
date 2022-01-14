@@ -17,6 +17,7 @@ async def on_message(input):
 #    Leave out messages from the Dungeon Bot
 #
     if str(input.author.id) != "920859015146246184":
+        await input.channel.send(input.channel)
         data_list = await check_user_id(input.author.id)
         await engine(input, data_list)
 
