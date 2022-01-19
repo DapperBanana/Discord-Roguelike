@@ -106,6 +106,9 @@ async def engine(text_input, user_id_info):
             await text_input.channel.send("Unfortunately " + username + ", you are not the current player. Please wait until the current game is finished/paused.")
             return
         else:
+            if str(text_input.content).lower() == "help":
+                f = open("help_screen.txt", 'r')
+                await text_input.channel.send("```" + f.read() + "```")
             #Deal with start commands first
             for command in starting_command_list:
                 if command == text_input.content:
@@ -127,6 +130,9 @@ async def engine(text_input, user_id_info):
                 return
 
     if is_active_user:
+        if str(text_input.content).lower() == "help":
+            f = open("help_screen.txt", 'r')
+            await text_input.channel.send("```" + f.read() + "```")
         #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
         is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input)
         if is_command:
@@ -180,9 +186,9 @@ async def starting_commands(text_input, user_id_info):
             temp = str(x) + "..."
             await text_input.channel.send(temp)
         
-        for x in range(1,5):
+        for x in range(10):
             await text_input.channel.purge(limit=defaultval)
-            tempfilename = "start_screen_" + str(x) + ".txt"
+            tempfilename = "start_screen_" + str(x+1) + ".txt"
             f = open(tempfilename, 'r')
             await text_input.channel.send("```" + f.read() + "```")
             time.sleep(5)

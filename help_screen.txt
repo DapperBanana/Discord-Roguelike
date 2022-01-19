@@ -1,0 +1,44 @@
+############################################
+#    __   __  _______  ___      _______    #
+#   |  | |  ||       ||   |    |       |   #
+#   |  |_|  ||    ___||   |    |    _  |   #
+#   |       ||   |___ |   |    |   |_| |   #
+#   |       ||    ___||   |___ |    ___|   #
+#   |   _   ||   |___ |       ||   |       #
+#   |__| |__||_______||_______||___|       #
+#   ====================================   #
+#                                          #
+#   Basic Commands:                        #
+#     new game         login views the     #
+#     login            status of your game #
+#     pause            and allows you to   #
+#     end game         take your next steps#
+#                                          #
+#                                          #
+#   Basic Movement:                        #
+#     n or north       In order to perform #
+#     e or east         a dash, type the   #
+#     s or south        amount of spaces   #
+#     w or west         to dash. i.e:      #
+#     u or up            "5e" would mean   #
+#     d or down           5 spaces east    #
+#                                          #
+#   Basic Actions:                         #
+#     look                                 #
+#     stats                                #
+#                                          #
+#                                          #
+#                                          #
+#                                          #
+#   Fighting:                              #
+#     Simply move onto the same square     #
+#     as an enemy in order to attack       #
+#                                          #
+#   Map Legend:                            #
+#     & : Player  m : mouse     w : wolf   #
+#     # : Wall    b : bats      I : imp    #
+#     - : Void    s : snake     W : wizard #
+#     ? : item    p : spider               #
+#     < : door    S : skeleton  ! : Boss   #
+#                                          #
+############################################
