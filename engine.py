@@ -113,7 +113,7 @@ async def engine(text_input, user_id_info):
                 await text_input.channel.send("```" + f.read() + "```")
             #Deal with start commands first
             for command in starting_command_list:
-                if command == text_input.content:
+                if command == str(text_input.content).lower():
                     await starting_commands(text_input, user_id_info)
                     return
 
