@@ -143,8 +143,10 @@ async def engine(text_input, user_id_info):
                 #await text_input.channel.purge(limit=defaultval)
                 for x in range(iteration):
                     #I want to move the player using:
-                    await move_player(mov_dir, str(text_input.author.id))
+                    text = await move_player(mov_dir, str(text_input.author.id), text_input)
                     await resolve_screen(text_input)
+                    if text != "null":
+                        await text_input.channel.send(text)
 
             else:
                 await text_input.channel.send(command)
@@ -219,7 +221,7 @@ async def starting_commands(text_input, user_id_info):
         else:
             await text_input.channel.send("No such campaign exists, do you want to make a *new game*?")
     
-    return
+    return 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  ___      _______  __   __  _______  ______      __   __  _______  __   __  _______  __   __  _______  __    _  _______ 
@@ -230,7 +232,7 @@ async def starting_commands(text_input, user_id_info):
 #|   |    |       ||   _   |  |   |  |   |___ |   |  | |  | ||_|| ||       | |     | |   |___ | ||_|| ||   |___ | | |   |  |   |  
 #|___|    |_______||__| |__|  |___|  |_______||___|  |_|  |_|   |_||_______|  |___|  |_______||_|   |_||_______||_|  |__|  |___|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-async def move_player(direction, player_name):
+async def move_player(direction, player_name, raw_input):
     #First find the player on the map
     with open("active_" + player_name + ".txt") as f:
         input_grid = f.readlines()
@@ -252,9 +254,8 @@ async def move_player(direction, player_name):
             if grid_array[y][x] == "&":
                 player_x = x
                 player_y = y
-    
-    #erase the previous location for the player
-    grid_array[player_y][player_x] = " "
+    old_x = player_x
+    old_y = player_y
     #next let's move in one of the four possible directions and update the map
     if direction == 0:
         player_y -= 1
@@ -264,11 +265,18 @@ async def move_player(direction, player_name):
         player_y += 1
     elif direction == 3:
         player_x -= 1
-    #update the player location in the active file
-    grid_array[player_y][player_x] = "&"
-    #save it to the active player file
-    file_name = "active_" + str(player_name) + ".txt"
-    numpy.savetxt(file_name, grid_array, fmt='%s')
+    if grid_array[player_y][player_x] == "#":
+        val = "There is a wall there!"
+    else:
+        #update the player location in the active file
+        #erase the previous location for the player
+        grid_array[old_y][old_x] = " "
+        grid_array[player_y][player_x] = "&"
+        #save it to the active player file
+        file_name = "active_" + str(player_name) + ".txt"
+        numpy.savetxt(file_name, grid_array, fmt='%s')
+        val = "null"
+    return val
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ___   __    _  _______  __   __  _______    _______  _______  ______    _______  _______  ______   
