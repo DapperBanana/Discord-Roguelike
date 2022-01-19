@@ -135,8 +135,8 @@ async def engine(text_input, user_id_info):
 
             if str(text_input.content).find(command) != -1:
                 new_text = await active_commands(text_input, user_id_info)
-                if new_text == "print" or new_text == "moved":
-                    await text_input.channel.purge(limit=defaultval)
+                if new_text == "refresh":
+                    #await text_input.channel.purge(limit=defaultval)
                     await resolve_screen(text_input.author.id)
                     tempfilename = "test_view.txt"
                     f = open(tempfilename, 'r')
@@ -252,16 +252,16 @@ async def active_commands(text_input, user_id_info):
     
     elif input_command == "n" or input_command == "north":
         await move_player(0, str(text_input.author.id))
-        return "moved"
+        return "refresh"
     elif input_command == "e" or input_command == "east":
         await move_player(1, str(text_input.author.id))
-        return "moved"
+        return "refresh"
     elif input_command == "s" or input_command == "south":
         await move_player(2, str(text_input.author.id))
-        return "moved"
+        return "refresh"
     elif input_command == "w" or input_command == "west":
         await move_player(3, str(text_input.author.id))
-        return "moved"
+        return "refresh"
     
     else:
         return "print"
@@ -317,3 +317,15 @@ async def move_player(direction, player_name):
     #save it to the active player file
     file_name = "active_" + str(player_name) + ".txt"
     numpy.savetxt(file_name, grid_array, fmt='%s')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ___   __    _  _______  __   __  _______    _______  _______  ______    _______  _______  ______   
+#|   | |  |  | ||       ||  | |  ||       |  |       ||   _   ||    _ |  |       ||       ||    _ |  
+#|   | |   |_| ||    _  ||  | |  ||_     _|  |    _  ||  |_|  ||   | ||  |  _____||    ___||   | ||  
+#|   | |       ||   |_| ||  |_|  |  |   |    |   |_| ||       ||   |_||_ | |_____ |   |___ |   |_||_ 
+#|   | |  _    ||    ___||       |  |   |    |    ___||       ||    __  ||_____  ||    ___||    __  |
+#|   | | | |   ||   |    |       |  |   |    |   |    |   _   ||   |  | | _____| ||   |___ |   |  | |
+#|___| |_|  |__||___|    |_______|  |___|    |___|    |__| |__||___|  |_||_______||_______||___|  |_|
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+async def input_parse(input_string):
+    print("hello world!")
