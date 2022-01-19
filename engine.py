@@ -312,7 +312,7 @@ async def input_parse(raw_input):
                 movement_direction = 3
 
     #Lastly let's RegEx this bitch and find iterative values
-    if re.search("\d*[nesw]", formatted_input):
+    if re.search("\d+[nesw]$", formatted_input):
         input_is_command = 1
         input_is_movement = 1
         x = re.search("[nesw]", formatted_input)
