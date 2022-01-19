@@ -22,10 +22,12 @@ from discord.ext import commands
 defaultval = 100
 
 active_command_list = ["logout",
+                "login"
                 "end mission",
                 "exit",
                 "pause",
-                "print"]
+                "print",
+                "enter"]
 
 starting_command_list = [  "login",
                     "continue",
@@ -166,9 +168,9 @@ async def starting_commands(text_input, user_id_info):
     is_user_alive = user_id_info[1]
     is_active_file = user_id_info[2]
     username = text_input.author.name
-
+    formatted_text = str(text_input.content).lower()
     #Now we have to cycle through the commands and determine which one they chose to start with
-    if text_input.content == "new game":
+    if formatted_text == "new game":
     #start a new campaign
 
         #clear all old messages
@@ -192,8 +194,10 @@ async def starting_commands(text_input, user_id_info):
             f = open(tempfilename, 'r')
             await text_input.channel.send("```" + f.read() + "```")
             time.sleep(5)
+        
+        await text_input.channel.send("Now brave knight you must __***enter***__ the catacombs!")
 
-    elif text_input.content == "continue":
+    elif formatted_text == "continue":
     #continue
 
         #Change the old file to active status
@@ -203,10 +207,16 @@ async def starting_commands(text_input, user_id_info):
             os.rename(file_name, new_name)
             await text_input.channel.send("Campaign has been set to active!")
         else:
-            await text_input.channel.send("No such campaign exists, do you want to make a *new campaign*?")
+            await text_input.channel.send("No such campaign exists, do you want to make a *new game*?")
     
-    elif text_input.content == "test":
+    elif formatted_text == "test":
         await text_input.channel.send("test is working")
+    elif formatted_text == "login":
+        file_name = str(text_input.author.id) + ".txt"
+        if os.path.exists(file_name):
+            await text_input.channel.send("You have a paused game, would you like to *continue*?")
+        else:
+            await text_input.channel.send("No such campaign exists, do you want to make a *new game*?")
     
     return
 
@@ -301,6 +311,11 @@ async def input_parse(raw_input):
                 if os.path.exists(file_name):
                     os.remove(file_name)
                     message_to_send = "Campaign has ended! Safe travels"
+            elif formatted_input == "print" or formatted_input == "enter":
+                await resolve_screen(raw_input)
+                message_to_send = "You have entered the mighty catacombs of Mount Parthil. Good luck Adventurer!"
+            elif formatted_input == "login":
+                message_to_send = "You are currently playing!"
     #After we've iterated through the commands list let's now see if we're dealing with a direction/movement command
     #First we're looking for just a direction, no iteration
     for direction in movement_list:
