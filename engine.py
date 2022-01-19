@@ -128,7 +128,7 @@ async def engine(text_input, user_id_info):
 
     if is_active_user:
         #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
-        is_command, is_movement, iteration, mov_dir, command = input_parse(text_input)
+        is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input)
         if is_command:
             if is_movement:
                 #Haven't decided whether or not I want the player to have a log of their moves
