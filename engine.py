@@ -22,7 +22,7 @@ from discord.ext import commands
 defaultval = 100
 
 active_command_list = ["logout",
-                "login"
+                "login",
                 "end mission",
                 "exit",
                 "pause",
