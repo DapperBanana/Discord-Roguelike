@@ -14,8 +14,8 @@ from discord.ext import commands
 # |____|   |____(____  / ____|\___  >__|      \_/ |__|\___  >\/\_/  
 #                    \/\/         \/                      \/   
 
-async def resolve_screen(file_name):
-
+async def resolve_screen(raw_input):
+    file_name = raw_input.author.id
     #First find the player on the map
     with open("active_" + file_name + ".txt") as f:
         input_grid = f.readlines()
@@ -75,6 +75,8 @@ async def resolve_screen(file_name):
         for x in range(player_view_x*2+1):
             viewable_grid[y][x] = grid_array[y + viewable_grid_y_start][x + viewable_grid_x_start]
 
-    numpy.savetxt("test_view.txt", viewable_grid, fmt='%s')
+    numpy.savetxt("current_view.txt", viewable_grid, fmt='%s')
+    f = open("current_view", 'r')
+    await raw_input.channel.send("```" + f.read() + "```")    
     
 

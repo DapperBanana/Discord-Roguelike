@@ -136,7 +136,8 @@ async def engine(text_input, user_id_info):
                 for x in range(iteration):
                     #I want to move the player using:
                     await move_player(mov_dir, str(text_input.author.id))
-                    await resolve_screen(text_input.author.id)
+                    await resolve_screen(text_input)
+
             else:
                 await text_input.channel.send(command)
         else:
