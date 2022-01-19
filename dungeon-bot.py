@@ -18,8 +18,6 @@ async def on_message(input):
 #
     if str(input.author.id) != "920859015146246184":
         if str(input.channel) == "bot-playground":
-            input_command = str(input.content).lower()
-            await input.channel.send(input_command)
             data_list = await check_user_id(input.author.id)
             await engine(input, data_list)
 
