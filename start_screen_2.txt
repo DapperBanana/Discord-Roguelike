@@ -16,15 +16,15 @@
       Design & Programming by:
          Austin L. Howard
 
-	      Art by:
-	    Harry Mason
-	   Shanaka Dias
-	  Andreas Freise
-	        MRF
-	        SSt
-	  Steven Maddison
-	   Joan G. Stark
-	  Max Strandberg
-       Hayley Jane Wakenshaw
-         Austin L. Howard
+	        Art by:
+	      Harry Mason
+	     Shanaka Dias
+	    Andreas Freise
+	          MRF
+	          SSt
+	    Steven Maddison
+	     Joan G. Stark
+	    Max Strandberg
+     Hayley Jane Wakenshaw
+        Austin L. Howard
 	
