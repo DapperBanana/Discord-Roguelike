@@ -19,7 +19,6 @@ jobs:
         sudo pkill -f dungeon-bot.py || true
         sudo rm -rf /home/pi/Discord-Roguelike
         sudo git clone https://github.com/Captain-Howard/Discord-Roguelike.git /home/pi/Discord-Roguelike/
-        sudo cp -r /home/pi/Discord-Roguelike/. /home/pi/actions-runner/_work/Discord-Roguelike/Discord-Roguelike
         sudo python /home/pi/Discord-Roguelike/dungeon-bot.py &
         
         
