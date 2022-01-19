@@ -1,0 +1,38 @@
+
+
+                  ^
+                 / \
+            ^   _|.|_   ^
+          _|I|  |I .|  |.|_
+          \II||~~| |~~||  /
+           ~\~|~~~~~~~|~/~
+             \|II I ..|/
+        /\    |II.    |    /\
+       /  \  _|III .  |_  /  \
+       |-~| /(|I.I I  |)\ |~-|
+     _/(I | +-----------+ |. )\_
+     \~-----/____-~-____\-----~/
+      |I.III|  /(===)\  |  .. |
+      /~~~-----_________---~~~\
+     `##########!\-#####%!!!!!| |\
+    _/###########!!\~~-_##%!!!\_/|
+    \##############!!!!!/~~-_%!!!!\
+     ~)#################!!!!!/~~--\_
+  __ /#####################%%!!!!/ /
+  \,~\-_____##############%%%!!!!\/
+  /!!!!\ \ \~-_###########%%%!!!!\
+ /#####!!!!!!!\~-_#######%%%!!!!!!\_
+/#############!!!\#########%%%!!!!!!\
+
+As you approach the mighty Mount Parthil,
+home of the best armourers in all of 
+Alamoor, you notice the great bridge has
+been destroyed. You've been left with no
+other options, you must climb through the
+catacombs. While the village hiding in the
+shadow of this great castle have been
+untouched there is a dread that lingers in
+the air; None have seen exactly what is
+causing all of the destruction around the
+castle, but they are sure that if it isn't
+stopped soon their lives may be at risk!
