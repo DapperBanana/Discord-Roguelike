@@ -195,7 +195,7 @@ async def starting_commands(text_input, user_id_info):
             await text_input.channel.send("```" + f.read() + "```")
             time.sleep(5)
         
-        await text_input.channel.send("Now brave knight you must __***enter***__ the catacombs!")
+        await text_input.channel.send("Now brave knight you must *enter* the catacombs!")
 
     elif formatted_text == "continue":
     #continue
@@ -206,6 +206,7 @@ async def starting_commands(text_input, user_id_info):
         if os.path.exists(file_name):
             os.rename(file_name, new_name)
             await text_input.channel.send("Campaign has been set to active!")
+            await text_input.channel.send("When you are ready feel free to *enter* the catacombs!")
         else:
             await text_input.channel.send("No such campaign exists, do you want to make a *new game*?")
     
