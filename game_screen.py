@@ -17,7 +17,7 @@ from discord.ext import commands
 async def resolve_screen(raw_input):
     file_name = raw_input.author.id
     #First find the player on the map
-    with open("active_" + file_name + ".txt") as f:
+    with open("active_" + str(file_name) + ".txt") as f:
         input_grid = f.readlines()
     input_grid = [row.rstrip('\n') for row in input_grid]
     player_x = 0
