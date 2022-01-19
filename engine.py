@@ -1,3 +1,4 @@
+import re
 import os
 import os.path
 import os
@@ -20,32 +21,27 @@ from discord.ext import commands
 
 defaultval = 100
 
-active_command_list = ["w",
-                "a",
-                "s",
-                "d",
-                "up",
-                "down",
-                "left",
-                "right",
-                "logout",
+active_command_list = ["logout",
                 "end mission",
                 "exit",
                 "pause",
-                "print",
-                "n",
+                "print"]
+
+starting_command_list = [  "login",
+                    "continue",
+                    "new game",
+                    "test"]
+
+movement_list = ["n",
                 "e",
                 "s",
                 "w",
                 "north",
                 "east",
                 "south",
-                "west"]
-
-starting_command_list = [  "login",
-                    "continue",
-                    "new game",
-                    "test"]
+                "west",
+                "up",
+                "down"]
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  __   __  _______  _______  ___   _          __   __  _______  _______  ______            ___   ______  
@@ -131,26 +127,21 @@ async def engine(text_input, user_id_info):
                 return
 
     if is_active_user:
-        for command in active_command_list:
-
-            if str(text_input.content).find(command) != -1:
-                new_text = await active_commands(text_input, user_id_info)
-                if new_text == "refresh":
-                    #await text_input.channel.purge(limit=defaultval)
+        #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
+        is_command, is_movement, iteration, mov_dir, command = input_parse(text_input)
+        if is_command:
+            if is_movement:
+                #Haven't decided whether or not I want the player to have a log of their moves
+                #await text_input.channel.purge(limit=defaultval)
+                for x in range(iteration):
+                    #I want to move the player using:
+                    await move_player(mov_dir, str(text_input.author.id))
                     await resolve_screen(text_input.author.id)
-                else:
-                    await text_input.channel.send(new_text)
-                
-                return
-        #There's a game going on and you are the correct person to be typing
-        await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
+            else:
+                await text_input.channel.send(command)
+        else:
+            await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
         return
-
-    #screen_width = 20
-    #screen_height = 20
-
-    #player_x = int(screen_width / 2)
-    #player_y = int(screen_height / 2)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  _______  _______  ______    _______  ___   __    _  _______          _______  _______  __   __  __   __  _______  __    _  ______   _______ 
@@ -213,60 +204,6 @@ async def starting_commands(text_input, user_id_info):
     return
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# _______  _______  _______  ___   __   __  _______    _______  _______  __   __  __   __  _______  __    _  ______   _______ 
-#|   _   ||       ||       ||   | |  | |  ||       |  |       ||       ||  |_|  ||  |_|  ||   _   ||  |  | ||      | |       |
-#|  |_|  ||       ||_     _||   | |  |_|  ||    ___|  |       ||   _   ||       ||       ||  |_|  ||   |_| ||  _    ||  _____|
-#|       ||       |  |   |  |   | |       ||   |___   |       ||  | |  ||       ||       ||       ||       || | |   || |_____ 
-#|       ||      _|  |   |  |   | |       ||    ___|  |      _||  |_|  ||       ||       ||       ||  _    || |_|   ||_____  |
-#|   _   ||     |_   |   |  |   |  |     | |   |___   |     |_ |       || ||_|| || ||_|| ||   _   || | |   ||       | _____| |
-#|__| |__||_______|  |___|  |___|   |___|  |_______|  |_______||_______||_|   |_||_|   |_||__| |__||_|  |__||______| |_______|
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-async def active_commands(text_input, user_id_info):
-    input_command = str(text_input.content).lower()
-    if input_command == "pause":
-        #pause your campaign
-
-        #clear all old messages
-        await text_input.channel.purge(limit=defaultval)
-        #Change the current file to non active status
-        file_name = "active_" + str(text_input.author.id) + ".txt"
-        new_name = str(text_input.author.id) + ".txt"
-        if os.path.exists(file_name):
-            os.rename(file_name, new_name)
-            return "Campaign has been paused! Until next time!"
-
-    elif input_command == "end mission":
-        #end your campaign
-
-        #clear all old messages
-        await text_input.channel.purge(limit=defaultval)
-        #Delete the file
-        file_name = "active_" + str(text_input.author.id) + ".txt"
-        if os.path.exists(file_name):
-            os.remove(file_name)
-            return "Campaign has ended! Safe travels"
-    
-    elif input_command == "n" or input_command == "north":
-        await move_player(0, str(text_input.author.id))
-        return "refresh"
-    elif input_command == "e" or input_command == "east":
-        await move_player(1, str(text_input.author.id))
-        return "refresh"
-    elif input_command == "s" or input_command == "south":
-        await move_player(2, str(text_input.author.id))
-        return "refresh"
-    elif input_command == "w" or input_command == "west":
-        await move_player(3, str(text_input.author.id))
-        return "refresh"
-    
-    else:
-        return "print"
-
-if __name__ == '__main__':
-    engine()
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  ___      _______  __   __  _______  ______      __   __  _______  __   __  _______  __   __  _______  __    _  _______ 
 #|       ||   |    |   _   ||  | |  ||       ||    _ |    |  |_|  ||       ||  | |  ||       ||  |_|  ||       ||  |  | ||       |
 #|    _  ||   |    |  |_|  ||  |_|  ||    ___||   | ||    |       ||   _   ||  |_|  ||    ___||       ||    ___||   |_| ||_     _|
@@ -324,5 +261,83 @@ async def move_player(direction, player_name):
 #|   | | | |   ||   |    |       |  |   |    |   |    |   _   ||   |  | | _____| ||   |___ |   |  | |
 #|___| |_|  |__||___|    |_______|  |___|    |___|    |__| |__||___|  |_||_______||_______||___|  |_|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-async def input_parse(input_string):
-    print("hello world!")
+async def input_parse(raw_input):
+    #These are the return values
+    input_is_command = 0 #0 for no, 1 for yes
+    input_is_movement = 0 #0 for no, 1 for yes
+    iterative_value = 0 #This is how many times the character will move automatically
+    movement_direction = 0 #0 is n, 1 is east, 2 is south, and 3 is west
+    message_to_send = " " #This is the message that will be sent back should there be a command
+    #Before we do anything lets lower the punctuation to make everything easier
+    formatted_input = str(raw_input.content).lower()
+    #First let's find if you're a part of the command list
+    for command in active_command_list:
+        if formatted_input == command:
+            input_is_command = 1
+            input_is_movement = 0
+            #This is when we iterate through all the fucking commands
+            if formatted_input == "pause":
+                #clear all old messages
+                await raw_input.channel.purge(limit=defaultval)
+                #Change the current file to non active status
+                file_name = "active_" + str(raw_input.author.id) + ".txt"
+                new_name = str(raw_input.author.id) + ".txt"
+                if os.path.exists(file_name):
+                    os.rename(file_name, new_name)
+                    message_to_send =  "Campaign has been paused! Until next time!"
+
+            elif formatted_input == "end mission":
+                #clear all old messages
+                await raw_input.channel.purge(limit=defaultval)
+                #Delete the file
+                file_name = "active_" + str(raw_input.author.id) + ".txt"
+                if os.path.exists(file_name):
+                    os.remove(file_name)
+                    message_to_send = "Campaign has ended! Safe travels"
+    #After we've iterated through the commands list let's now see if we're dealing with a direction/movement command
+    #First we're looking for just a direction, no iteration
+    for direction in movement_list:
+        if formatted_input == direction:
+            input_is_command = 1
+            input_is_movement = 1
+            iterative_value = 1
+            if direction == "n" or direction == "north":
+                movement_direction = 0
+            elif direction == "e" or direction == "east":
+                movement_direction = 1
+            elif direction == "s" or direction == "south":
+                movement_direction = 2
+            elif direction == "w" or direction == "west":
+                movement_direction = 3
+
+    #Lastly let's RegEx this bitch and find iterative values
+    if re.search("\d*[nesw]", formatted_input):
+        input_is_command = 1
+        input_is_movement = 1
+        x = re.search("[nesw]", formatted_input)
+        char_index_val = x.span()
+        direction = formatted_input[char_index_val[0]]
+        x = re.split("[nesw]", formatted_input)
+        iterative_value = int(x[0])
+        if direction == "n":
+            movement_direction = 0
+        elif direction == "e":
+            movement_direction = 1
+        elif direction == "s":
+            movement_direction = 2
+        elif direction == "w":
+            movement_direction = 3
+
+    return input_is_command, input_is_movement, iterative_value, movement_direction, message_to_send
+
+
+
+#
+#
+#
+#
+#
+#
+#
+if __name__ == '__main__':
+    engine()
