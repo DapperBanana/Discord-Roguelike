@@ -195,7 +195,14 @@ async def starting_commands(text_input, user_id_info):
             tempfilename = "start_screen_" + str(x+1) + ".txt"
             f = open(tempfilename, 'r')
             await text_input.channel.send("```" + f.read() + "```")
-            time.sleep(5)
+            if x == 0 or x== 1 or x == 3:
+                time.sleep(3)
+            elif x == 2 or 6 or 7 or 8:
+                time.sleep(10)
+            elif x == 9:
+                time.sleep(1)
+            else:
+                time.sleep(5)
         
         await text_input.channel.send("Now brave knight you must *enter* the catacombs!")
 
