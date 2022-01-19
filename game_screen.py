@@ -76,7 +76,7 @@ async def resolve_screen(raw_input):
             viewable_grid[y][x] = grid_array[y + viewable_grid_y_start][x + viewable_grid_x_start]
 
     numpy.savetxt("current_view.txt", viewable_grid, fmt='%s')
-    f = open("current_view", 'r')
+    f = open("current_view.txt", 'r')
     await raw_input.channel.send("```" + f.read() + "```")    
     
 
