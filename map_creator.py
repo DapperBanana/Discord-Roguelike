@@ -7,6 +7,27 @@ import random
 import numpy
 from discord.ext import commands
 
+#enemy_list = {
+#    "m" : "12010",
+#    "b" : "22010",
+#    "s" : "32110",
+#    "p" : "22110",
+#    "w" : "45110",
+#    "S" : "99990",
+#    "I" : "99990",
+#    "W" : "99990",
+#    "!" : "99990",
+#    "?" : "00002",
+#    "<" : "00003"
+#}
+
+#stats_reader = {
+#    1 : "strength",
+#    2 : "health",
+#    3 : "mana",
+#    4 : "level",
+#    5 : "item"
+#}
 
 async def generate_map(file_name):
     walls = "#"
@@ -73,5 +94,36 @@ async def generate_map(file_name):
                     grid_array[y][x] = walls
 
     grid_array[player_y][player_x] = player
+
+    #okay now that we have the player and everything inside of the grid... Let's start placing enemies
+    #I'm gonna have to redo the entire file nameing system if I want to load in a level as dictated on that sheet
+    #unless I throw the level inside a stats page... Could do that... I'll think about it.
+    #First anyways I'm just gonna spawn some basic enemies into a level and disregard difficulty scale according to level
+    enemy_list = {
+        "m",
+        "b",
+        "s",
+        "p"
+    }
+    level = 1
+    amount_of_enemies = level * random.randint(1,5)
+    for x in range(amount_of_enemies):
+        type_of_enemy = random.choice(enemy_list)
+        enemy_y = random.randint(0,room_height-1)
+        enemy_x = random.randint(0,room_width-1)
+        if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
+            val = random.choice(-1, 1)
+            enemy_x += val * 3
+            enemy_y += val * 3
+        while grid_array[enemy_y][enemy_x] != " ":
+            val = random.choice(-1, 1)
+            enemy_x += val
+            enemy_y += val
+            if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
+                val = random.choice(-1, 1)
+                enemy_x += val * 3
+                enemy_y += val * 3
+        grid_array[enemy_y][enemy_x] = type_of_enemy
+
     #Now lets open a txt doc and write this shit
     numpy.savetxt(file_name, grid_array, fmt='%s')
