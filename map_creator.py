@@ -99,41 +99,36 @@ async def generate_map(file_name):
     #I'm gonna have to redo the entire file nameing system if I want to load in a level as dictated on that sheet
     #unless I throw the level inside a stats page... Could do that... I'll think about it.
     #First anyways I'm just gonna spawn some basic enemies into a level and disregard difficulty scale according to level
-    enemy_list = {
+    enemy_list = [
         "m",
         "b",
         "s",
         "p"
-    }
-    randchoice = {
-        -1,
-        1
-    }
+    ]
     level = 1
     amount_of_enemies = level * random.randint(1,5)
     for x in range(amount_of_enemies):
         type_of_enemy = random.randint(0,3)
         enemy_y = random.randint(0,room_height-1)
         enemy_x = random.randint(0,room_width-1)
-        if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
-            val = random.randint(0,1)
-            if val == 0:
-                val -= 1
-            enemy_x += val * 3
-            enemy_y += val * 3
+        if abs(enemy_y - player_y) <= 3 and abs(player_x - 20) <= 3:
+            enemy_x += (random.randint(0,1)*2-1) * 3
+            enemy_y += (random.randint(0,1)*2-1) * 3
         while grid_array[enemy_y][enemy_x] != " ":
-            val = random.randint(0,1)
-            if val == 0:
-                val -= 1
-            enemy_x += val
-            enemy_y += val
+            enemy_x += random.randint(0,1)*2-1
+            enemy_y += random.randint(0,1)*2-1
+            if enemy_y < 1:
+                enemy_y += 2
+            if enemy_y > (room_height - 2):
+                enemy_y -= 2
+            if enemy_x < 1:
+                enemy_x += 2
+            if enemy_x > (room_width - 2):
+                enemy_x -= 2
             if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
-                val = random.randint(0,1)
-                if val == 0:
-                    val -= 1
-                enemy_x += val * 3
-                enemy_y += val * 3
-        grid_array[enemy_y][enemy_x] = enemy_list[type_of_enemy]
+                enemy_x += (random.randint(0,1)*2-1) * 3
+                enemy_y += (random.randint(0,1)*2-1) * 3
+        grid_array[abs(enemy_y)][abs(enemy_x)] = enemy_list[type_of_enemy]
 
     #Now lets open a txt doc and write this shit
     numpy.savetxt(file_name, grid_array, fmt='%s')
