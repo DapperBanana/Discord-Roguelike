@@ -198,11 +198,11 @@ async def starting_commands(text_input, user_id_info):
             if x == 0 or x== 1 or x == 3:
                 time.sleep(3)
             elif x == 2 or 6 or 7 or 8:
-                time.sleep(10)
+                time.sleep(15)
             elif x == 9:
                 time.sleep(1)
             else:
-                time.sleep(5)
+                time.sleep(6)
         
         await text_input.channel.send("Now brave knight you must *enter* the catacombs!")
 
