@@ -116,19 +116,19 @@ async def generate_map(file_name):
         enemy_y = random.randint(0,room_height-1)
         enemy_x = random.randint(0,room_width-1)
         if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
-            val = random.choice(0,1)
+            val = random.randint(0,1)
             if val == 0:
                 val -= 1
             enemy_x += val * 3
             enemy_y += val * 3
         while grid_array[enemy_y][enemy_x] != " ":
-            val = random.choice(0,1)
+            val = random.randint(0,1)
             if val == 0:
                 val -= 1
             enemy_x += val
             enemy_y += val
             if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
-                val = random.choice(0,1)
+                val = random.randint(0,1)
                 if val == 0:
                     val -= 1
                 enemy_x += val * 3
