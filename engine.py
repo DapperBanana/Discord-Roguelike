@@ -162,9 +162,9 @@ async def engine(text_input, user_id_info):
                 await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
         else:
             if str(text_input.content).lower() == "next":
-                game_screen.print_credits(text_input, False)
+                await game_screen.print_credits(text_input, False)
             elif str(text_input.content).lower() == "skip":
-                game_screen.print_credits(text_input, True)
+                await game_screen.print_credits(text_input, True)
             
         return
 
@@ -202,7 +202,7 @@ async def starting_commands(text_input, user_id_info):
         credits_name = "credits_" + str(text_input.author.id) + ".txt"
         x = [1]
         numpy.savetxt(credits_name, x)
-        game_screen.print_credits(text_input, False)
+        await game_screen.print_credits(text_input, False)
 
     elif formatted_text == "continue":
     #continue
