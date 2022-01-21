@@ -83,14 +83,16 @@ async def resolve_screen(raw_input):
 async def print_credits(raw_data, skip_bool):
     total_credits = 10
     file_name = "credits_" + str(raw_data.author.id) + ".txt"
-    with open(file_name) as f:
-        screen_val = f.read()
+    tmp_screen_val = numpy.loadtxt(file_name).reshape(1)
+    screen_val = int(tmp_screen_val[0])
     if not skip_bool:
         if screen_val < 10:
             credits_screen = "start_screen_" + str(screen_val) + ".txt"
             f = open(credits_screen, 'r')
             await raw_data.channel.send("```" + f.read() + "```")
             await raw_data.channel.send("Page " + str(screen_val) + "/10      please go to the *next* page or *skip*")
+            screen_val += 1
+            numpy.savetxt(file_name, screen_val)
         else:
             credits_screen = "start_screen_" + str(screen_val) + ".txt"
             f = open(credits_screen, 'r')

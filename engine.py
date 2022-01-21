@@ -200,8 +200,8 @@ async def starting_commands(text_input, user_id_info):
 
         #Create the Credits!
         credits_name = "credits_" + str(text_input.author.id) + ".txt"
-        x = 1
-        numpy.savetxt(credits_name, x, fmt='%s')
+        x = [1]
+        numpy.savetxt(credits_name, x)
         game_screen.print_credits(text_input, False)
 
     elif formatted_text == "continue":
