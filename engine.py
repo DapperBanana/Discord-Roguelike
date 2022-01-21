@@ -45,6 +45,8 @@ movement_list = ["n",
                 "up",
                 "down"]
 
+starting_credits_latch = 1
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  __   __  _______  _______  ___   _          __   __  _______  _______  ______            ___   ______  
 #|       ||  | |  ||       ||       ||   | | |        |  | |  ||       ||       ||    _ |          |   | |      | 
@@ -172,37 +174,42 @@ async def starting_commands(text_input, user_id_info):
     username = text_input.author.name
     formatted_text = str(text_input.content).lower()
     #Now we have to cycle through the commands and determine which one they chose to start with
-    if formatted_text == "new game":
+    if formatted_text == "skip":
+        starting_credits_latch = 0
+        await text_input.channel.send("Starting Credits will be skipped!")
+    elif formatted_text == "new game":
     #start a new campaign
 
         #clear all old messages
         await text_input.channel.purge(limit=defaultval)
         #create a new active campaign mission
-        file_name = "active_" + str(text_input.author.id) + ".txt"
         #here we'll generate a map
-        await generate_map(file_name)
+        await generate_map(text_input)
 
         #Now start the credits
         await text_input.channel.send("New campaign started for: " + str(username))
-        await text_input.channel.send("Game will start in:")
-        for x in range(5, 0, -1):        
-            time.sleep(1)
-            temp = str(x) + "..."
-            await text_input.channel.send(temp)
-        
-        for x in range(10):
-            await text_input.channel.purge(limit=defaultval)
-            tempfilename = "start_screen_" + str(x+1) + ".txt"
-            f = open(tempfilename, 'r')
-            await text_input.channel.send("```" + f.read() + "```")
-            if x == 0 or x== 1 or x == 3:
-                time.sleep(3)
-            elif x == 2 or 6 or 7 or 8:
-                time.sleep(15)
-            elif x == 9:
+        while starting_credits_latch == 1:
+            await text_input.channel.send("Remember you can *skip* the intro if you would like!")
+            await text_input.channel.send("Game will start in:")
+            for x in range(5, 0, -1):        
                 time.sleep(1)
-            else:
-                time.sleep(6)
+                temp = str(x) + "..."
+                await text_input.channel.send(temp)
+        
+            for x in range(10):
+                await text_input.channel.purge(limit=defaultval)
+                tempfilename = "start_screen_" + str(x+1) + ".txt"
+                f = open(tempfilename, 'r')
+                await text_input.channel.send("```" + f.read() + "```")
+                if x == 0 or x== 1 or x == 3:
+                    time.sleep(3)
+                elif x == 2 or 6 or 7 or 8:
+                    time.sleep(15)
+                elif x == 9:
+                    time.sleep(1)
+                else:
+                    time.sleep(6)
+            starting_credits_latch = 0
         
         await text_input.channel.send("Now brave knight you must *enter* the catacombs!")
 
@@ -368,6 +375,15 @@ async def input_parse(raw_input):
 
     return input_is_command, input_is_movement, iterative_value, movement_direction, message_to_send
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# _______  __    _  _______  __   __  __   __    _______  _______  _______  __   __  _______  ___   __    _  ______   ___   __    _  _______ 
+#|       ||  |  | ||       ||  |_|  ||  | |  |  |       ||   _   ||       ||  | |  ||       ||   | |  |  | ||      | |   | |  |  | ||       |
+#|    ___||   |_| ||    ___||       ||  |_|  |  |    _  ||  |_|  ||_     _||  |_|  ||    ___||   | |   |_| ||  _    ||   | |   |_| ||    ___|
+#|   |___ |       ||   |___ |       ||       |  |   |_| ||       |  |   |  |       ||   |___ |   | |       || | |   ||   | |       ||   | __ 
+#|    ___||  _    ||    ___||       ||_     _|  |    ___||       |  |   |  |       ||    ___||   | |  _    || |_|   ||   | |  _    ||   ||  |
+#|   |___ | | |   ||   |___ | ||_|| |  |   |    |   |    |   _   |  |   |  |   _   ||   |    |   | | | |   ||       ||   | | | |   ||   |_| |
+#|_______||_|  |__||_______||_|   |_|  |___|    |___|    |__| |__|  |___|  |__| |__||___|    |___| |_|  |__||______| |___| |_|  |__||_______|
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 #
