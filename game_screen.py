@@ -80,3 +80,32 @@ async def resolve_screen(raw_input):
     await raw_input.channel.send("```" + f.read() + "```")    
     
 
+async def print_credits(raw_data, skip_bool):
+    total_credits = 10
+    file_name = "credits_" + str(raw_data.author.id) + ".txt"
+    with open(file_name) as f:
+        screen_val = f.read()
+    if not skip_bool:
+        if screen_val < 10:
+            credits_screen = "start_screen_" + str(screen_val) + ".txt"
+            f = open(credits_screen, 'r')
+            await raw_data.channel.send("```" + f.read() + "```")
+            await raw_data.channel.send("Page " + str(screen_val) + "/10      please go to the *next* page or *skip*")
+        else:
+            credits_screen = "start_screen_" + str(screen_val) + ".txt"
+            f = open(credits_screen, 'r')
+            await raw_data.channel.send("```" + f.read() + "```")
+            await raw_data.channel.send("Page " + str(screen_val) + "/10")
+            await raw_data.channel.send("Now brave knight you must *enter* the catacombs!")
+            #We want to delete the credits page
+            os.remove(file_name)
+
+    else:
+        for x in range(screen_val, total_credits+1):
+            credits_screen = "start_screen_" + str(x) + ".txt"
+            f = open(credits_screen, 'r')
+            await raw_data.channel.send("```" + f.read() + "```")
+            await raw_data.channel.send("Page " + str(x) + "/10")
+        await raw_data.channel.send("Now brave knight you must *enter* the catacombs!")
+        #Lastly we need to delete the credits page
+        os.remove(file_name)

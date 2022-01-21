@@ -5,6 +5,7 @@ import os
 import glob
 import time
 import numpy
+import game_screen
 from map_creator import generate_map
 from game_screen import resolve_screen
 from discord.ext import commands
@@ -32,7 +33,8 @@ active_command_list = ["logout",
 starting_command_list = [  "login",
                     "continue",
                     "new game",
-                    "test"]
+                    "test"
+                    ]
 
 movement_list = ["n",
                 "e",
@@ -63,7 +65,7 @@ async def check_user_id(user_id):
     active = "na"
     exists = "na"
     active_file = False
-
+    active_credits = False
     #Check for a an active file recorded for this person
     for name in glob.glob('active_*.txt'):
         #If any name exists that means there is an active file
@@ -72,7 +74,9 @@ async def check_user_id(user_id):
             #This means that the person typing is the active user, and a file exists for them
             active = True
             exists = True
-            ret_list = [active, exists, active_file]
+            if os.path.isfile('./credits_' + str(user_id) + ".txt"):
+                active_credits = True
+            ret_list = [active, exists, active_file, active_credits]
             return ret_list
             #There shouldn't be any more active files than 1, but just in case we're nesting a return into here (That would be a bug for future me to figure out))
     
@@ -84,7 +88,7 @@ async def check_user_id(user_id):
     else:
         exists = False
 
-    ret_list = [active, exists, active_file]
+    ret_list = [active, exists, active_file, active_credits]
     return ret_list
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -102,6 +106,7 @@ async def engine(text_input, user_id_info):
     is_active_user = user_id_info[0]
     is_user_alive = user_id_info[1]
     is_active_file = user_id_info[2]
+    is_credits = user_id_info[3]
     username = text_input.author.name
 
     if not is_active_user:
@@ -134,26 +139,33 @@ async def engine(text_input, user_id_info):
                 return
 
     if is_active_user:
-        if str(text_input.content).lower() == "help":
-            f = open("help_screen.txt", 'r')
-            await text_input.channel.send("```" + f.read() + "```")
-        #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
-        is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input)
-        if is_command:
-            if is_movement:
-                #Haven't decided whether or not I want the player to have a log of their moves
-                #await text_input.channel.purge(limit=defaultval)
-                for x in range(iteration):
-                    #I want to move the player using:
-                    text = await move_player(mov_dir, str(text_input.author.id), text_input)
-                    await resolve_screen(text_input)
-                    if text != "null":
-                        await text_input.channel.send(text)
+        if not is_credits:
+            if str(text_input.content).lower() == "help":
+                f = open("help_screen.txt", 'r')
+                await text_input.channel.send("```" + f.read() + "```")
+            #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
+            is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input)
+            if is_command:
+                if is_movement:
+                    #Haven't decided whether or not I want the player to have a log of their moves
+                    #await text_input.channel.purge(limit=defaultval)
+                    for x in range(iteration):
+                        #I want to move the player using:
+                        text = await move_player(mov_dir, str(text_input.author.id), text_input)
+                        await resolve_screen(text_input)
+                        if text != "null":
+                            await text_input.channel.send(text)
 
+                else:
+                    await text_input.channel.send(command)
             else:
-                await text_input.channel.send(command)
+                await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
         else:
-            await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
+            if str(text_input.content).lower() == "next":
+                game_screen.print_credits(text_input, False)
+            elif str(text_input.content).lower() == "skip":
+                game_screen.print_credits(text_input, True)
+            
         return
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -173,12 +185,8 @@ async def starting_commands(text_input, user_id_info):
     is_active_file = user_id_info[2]
     username = text_input.author.name
     formatted_text = str(text_input.content).lower()
-    starting_credits_latch = 1
     #Now we have to cycle through the commands and determine which one they chose to start with
-    if formatted_text == "skip":
-        starting_credits_latch = 0
-        await text_input.channel.send("Starting Credits will be skipped!")
-    elif formatted_text == "new game":
+    if formatted_text == "new game":
     #start a new campaign
 
         #clear all old messages
@@ -189,32 +197,12 @@ async def starting_commands(text_input, user_id_info):
 
         #Now start the credits
         await text_input.channel.send("New campaign started for: " + str(username))
-        await text_input.channel.send("Remember you can *skip* the intro if you would like!")
-        await text_input.channel.send("Game will start in:")
-        for x in range(5, 0, -1):
-            if not starting_credits_latch:
-                break
-            time.sleep(1)
-            temp = str(x) + "..."
-            await text_input.channel.send(temp)
-    
-        for x in range(10):
-            if not starting_credits_latch:
-                break
-            await text_input.channel.purge(limit=defaultval)
-            tempfilename = "start_screen_" + str(x+1) + ".txt"
-            f = open(tempfilename, 'r')
-            await text_input.channel.send("```" + f.read() + "```")
-            if x == 0 or x== 1 or x == 3:
-                time.sleep(3)
-            elif x == 2 or 6 or 7 or 8:
-                time.sleep(15)
-            elif x == 9:
-                time.sleep(1)
-            else:
-                time.sleep(6)
-        
-        await text_input.channel.send("Now brave knight you must *enter* the catacombs!")
+
+        #Create the Credits!
+        credits_name = "credits_" + str(text_input.author.id) + ".txt"
+        x = 1
+        numpy.savetxt(credits_name, x, fmt='%s')
+        game_screen.print_credits(text_input, False)
 
     elif formatted_text == "continue":
     #continue
