@@ -173,6 +173,7 @@ async def starting_commands(text_input, user_id_info):
     is_active_file = user_id_info[2]
     username = text_input.author.name
     formatted_text = str(text_input.content).lower()
+    starting_credits_latch = 1
     #Now we have to cycle through the commands and determine which one they chose to start with
     if formatted_text == "skip":
         starting_credits_latch = 0
@@ -188,28 +189,30 @@ async def starting_commands(text_input, user_id_info):
 
         #Now start the credits
         await text_input.channel.send("New campaign started for: " + str(username))
-        while starting_credits_latch == 1:
-            await text_input.channel.send("Remember you can *skip* the intro if you would like!")
-            await text_input.channel.send("Game will start in:")
-            for x in range(5, 0, -1):        
+        await text_input.channel.send("Remember you can *skip* the intro if you would like!")
+        await text_input.channel.send("Game will start in:")
+        for x in range(5, 0, -1):
+            if not starting_credits_latch:
+                break
+            time.sleep(1)
+            temp = str(x) + "..."
+            await text_input.channel.send(temp)
+    
+        for x in range(10):
+            if not starting_credits_latch:
+                break
+            await text_input.channel.purge(limit=defaultval)
+            tempfilename = "start_screen_" + str(x+1) + ".txt"
+            f = open(tempfilename, 'r')
+            await text_input.channel.send("```" + f.read() + "```")
+            if x == 0 or x== 1 or x == 3:
+                time.sleep(3)
+            elif x == 2 or 6 or 7 or 8:
+                time.sleep(15)
+            elif x == 9:
                 time.sleep(1)
-                temp = str(x) + "..."
-                await text_input.channel.send(temp)
-        
-            for x in range(10):
-                await text_input.channel.purge(limit=defaultval)
-                tempfilename = "start_screen_" + str(x+1) + ".txt"
-                f = open(tempfilename, 'r')
-                await text_input.channel.send("```" + f.read() + "```")
-                if x == 0 or x== 1 or x == 3:
-                    time.sleep(3)
-                elif x == 2 or 6 or 7 or 8:
-                    time.sleep(15)
-                elif x == 9:
-                    time.sleep(1)
-                else:
-                    time.sleep(6)
-            starting_credits_latch = 0
+            else:
+                time.sleep(6)
         
         await text_input.channel.send("Now brave knight you must *enter* the catacombs!")
 
