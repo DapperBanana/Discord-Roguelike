@@ -93,8 +93,8 @@ async def print_credits(raw_data, skip_bool):
             f = open(credits_screen, 'r')
             await raw_data.channel.send("```" + f.read() + "```")
             await raw_data.channel.send("Page " + str(screen_val) + "/10      please go to the *next* page or *skip*")
-            screen_val += 1
-            numpy.savetxt(file_name, screen_val)
+            save_val = [screen_val + 1]
+            numpy.savetxt(file_name, save_val)
         else:
             credits_screen = "start_screen_" + str(screen_val) + ".txt"
             f = open(credits_screen, 'r')
