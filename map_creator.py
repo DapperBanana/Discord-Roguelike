@@ -5,31 +5,12 @@ import glob
 import time
 import random
 import numpy
+import game_info
 from discord.ext import commands
 
-#enemy_list = {
-#    "m" : "12010",
-#    "b" : "22010",
-#    "s" : "32110",
-#    "p" : "22110",
-#    "w" : "45110",
-#    "S" : "99990",
-#    "I" : "99990",
-#    "W" : "99990",
-#    "!" : "99990",
-#    "?" : "00002",
-#    "<" : "00003"
-#}
-
-#stats_reader = {
-#    1 : "strength",
-#    2 : "health",
-#    3 : "mana",
-#    4 : "level",
-#    5 : "item"
-#}
-
-async def generate_map(file_name):
+async def generate_map(raw_data):
+    #Definitions
+    file_name = "active_" + str(raw_data.author.id) + ".txt"
     walls = "#"
     floor = " "
     void = "-"
@@ -99,6 +80,12 @@ async def generate_map(file_name):
     #I'm gonna have to redo the entire file nameing system if I want to load in a level as dictated on that sheet
     #unless I throw the level inside a stats page... Could do that... I'll think about it.
     #First anyways I'm just gonna spawn some basic enemies into a level and disregard difficulty scale according to level
+    enemy_dict = {
+        "m" : ["m", 1, 2, 0, 1, 0, -1, -1, -1, 4, 0],
+        "b" : ["b", 2, 2, 0, 1, 0, -1, -1, -1, 4, 0],
+        "s" : ["s", 3, 2, 1, 1, 0, -1, -1, -1, 4, 0],
+        "p" : ["p", 2, 2, 1, 1, 0, -1, -1, -1, 2, 0]
+    }
     enemy_list = [
         "m",
         "b",
@@ -107,8 +94,14 @@ async def generate_map(file_name):
     ]
     level = 1
     amount_of_enemies = level * random.randint(1,5)
+    player_info = ["&", 3, 10, 0, 1, 0, player_x, player_y, -1, -1, 0]
+    info_array = [[void for i in range(len(player_info))] for j in range(amount_of_enemies + 1)]
+    for x in range(len(player_info)):
+        info_array[0][x] = player_info[x]
     for x in range(amount_of_enemies):
-        type_of_enemy = random.randint(0,3)
+        enemy_val = random.randint(0, len(enemy_list)-1)
+        enemy_character = enemy_list[enemy_val]
+        enemy_stats = enemy_dict[enemy_character]
         enemy_y = random.randint(0,room_height-1)
         enemy_x = random.randint(0,room_width-1)
         if abs(enemy_y - player_y) <= 3 and abs(player_x - 20) <= 3:
@@ -128,7 +121,20 @@ async def generate_map(file_name):
             if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
                 enemy_x += (random.randint(0,1)*2-1) * 3
                 enemy_y += (random.randint(0,1)*2-1) * 3
-        grid_array[abs(enemy_y)][abs(enemy_x)] = enemy_list[type_of_enemy]
+        grid_array[abs(enemy_y)][abs(enemy_x)] = enemy_character
+        for y in range(len(enemy_stats)):
+            if y == 6:
+                info_array[x+1][y] = enemy_x
+            elif y == 7:
+                info_array[x+1][y] = enemy_y
+            elif y == 8:
+                next_direction = random.randint(0,3)
+                info_array[x+1][y] = next_direction
+            else:
+                info_array[x+1][y] = enemy_stats[y]
+    
+    #Lastly let's create the game stats
+    await game_info.save_game_stats(raw_data, info_array)
 
     #Now lets open a txt doc and write this shit
     numpy.savetxt(file_name, grid_array, fmt='%s')
