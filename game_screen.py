@@ -77,7 +77,9 @@ async def resolve_screen(raw_input):
 
     numpy.savetxt("current_view.txt", viewable_grid, fmt='%s')
     f = open("current_view.txt", 'r')
-    await raw_input.channel.send("```" + f.read() + "```")    
+    await raw_input.channel.send("```" + f.read() + "```") 
+
+    return   
     
 
 async def print_credits(raw_data, skip_bool):
@@ -111,3 +113,5 @@ async def print_credits(raw_data, skip_bool):
         await raw_data.channel.send("Now brave knight you must *enter* the catacombs!")
         #Lastly we need to delete the credits page
         os.remove(file_name)
+    
+    return
