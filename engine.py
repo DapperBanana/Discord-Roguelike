@@ -321,9 +321,11 @@ async def input_parse(raw_input):
                 #clear all old messages
                 await raw_input.channel.purge(limit=defaultval)
                 #Delete the file
-                file_name = "active_" + str(raw_input.author.id) + ".txt"
-                if os.path.exists(file_name):
-                    os.remove(file_name)
+                game_file = "active_" + str(raw_input.author.id) + ".txt"
+                game_info_file = "info_" + str(raw_input.author.id) + ".txt"
+                if os.path.exists(game_file):
+                    os.remove(game_file)
+                    os.remove(game_info_file)
                     message_to_send = "Campaign has ended! Safe travels"
             elif formatted_input == "print" or formatted_input == "enter":
                 await resolve_screen(raw_input)
