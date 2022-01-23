@@ -327,9 +327,12 @@ async def input_parse(raw_input):
                     os.remove(game_file)
                     os.remove(game_info_file)
                     message_to_send = "Campaign has ended! Safe travels"
-            elif formatted_input == "print" or formatted_input == "enter":
+            elif formatted_input == "enter":
                 await resolve_screen(raw_input)
                 message_to_send = "You have entered the mighty catacombs of Mount Parthil. Good luck Adventurer!"
+            elif formatted_input == "print":
+                f = open("print-me.txt", 'r')
+                await raw_input.channel.send("```" + f.read() + "```") 
             elif formatted_input == "login":
                 message_to_send = "You are currently playing!"
     #After we've iterated through the commands list let's now see if we're dealing with a direction/movement command

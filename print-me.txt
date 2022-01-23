@@ -1,0 +1,17 @@
+
+                                  Stats                          
+                                  -----
+   #         # #           Health   :
+   - # #       #           Mana     :
+   - - #   #               Armour   :
+   - - #   # # #     #     Weapon   :
+   - - #   # #         #   Attack   :
+   - - #   # &             Evade    :
+   - - #   # #   #      
+   - - #         #   # #
+   - - - # # # # #      
+   - - - - - - - #   #  
+   - - - - - - #                                                            
+                         
+         Mount Parthil Catacombs
+                 Level 1  
