@@ -84,7 +84,14 @@ async def generate_map(raw_data):
         "m" : ["m", 1, 2, 0, 1, 0, -1, -1, -1, 4, 0],
         "b" : ["b", 2, 2, 0, 1, 0, -1, -1, -1, 4, 0],
         "s" : ["s", 3, 2, 1, 1, 0, -1, -1, -1, 4, 0],
-        "p" : ["p", 2, 2, 1, 1, 0, -1, -1, -1, 2, 0]
+        "p" : ["p", 2, 2, 1, 1, 0, -1, -1, -1, 2, 0],
+        "w" : ["w", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # Need
+        "S" : ["S", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # to
+        "I" : ["I", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # work
+        "W" : ["W", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # on
+        "!" : ["!", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # these
+        "?" : ["?", 0, 0, 0, 0, 2, -1, -1, -1, 0, 0],
+        "<" : ["<", 0, 0, 0, 0, 1, -1, -1, -1, 0, 0]
     }
     enemy_list = [
         "m",
@@ -94,6 +101,7 @@ async def generate_map(raw_data):
     ]
     level = 1
     amount_of_enemies = level * random.randint(1,5)
+    amount_of_items = level * random.randint(1,2) #Items spawns are going to be based on the level you're on, and there'll only be one door per level
     player_info = ["&", 3, 10, 0, 1, 0, player_x, player_y, -1, -1, 0]
     info_array = [[void for i in range(len(player_info))] for j in range(amount_of_enemies + 1)]
     for x in range(len(player_info)):
@@ -132,6 +140,72 @@ async def generate_map(raw_data):
                 info_array[x+1][y] = next_direction
             else:
                 info_array[x+1][y] = enemy_stats[y]
+    for x in range(amount_of_items):
+        #First value is going to be the door and then we'll spawn in the items
+        if x > 0:
+            item_stats = enemy_dict["?"]
+            item_y = random.randint(0,room_height-1)
+            item_x = random.randint(0,room_width-1)
+            #I think we want to spawn items with the same rules as enemies
+            #3 spaces around the player on all directions nothing can init spawn
+            if abs(item_y - player_y) <= 3 and abs(item_x - 20) <= 3:
+                item_x += (random.randint(0,1)*2-1) * 3
+                item_y += (random.randint(0,1)*2-1) * 3
+            while grid_array[item_y][item_x] != " ":
+                item_x += random.randint(0,1)*2-1
+                item_y += random.randint(0,1)*2-1
+                if item_y < 1:
+                    item_y += 2
+                if item_y > (room_height - 2):
+                    item_y -= 2
+                if item_x < 1:
+                    item_x += 2
+                if item_x > (room_width - 2):
+                    item_x -= 2
+                if abs(item_y - player_y) <= 3 and abs(item_x - player_x) <= 3:
+                    item_x += (random.randint(0,1)*2-1) * 3
+                    item_y += (random.randint(0,1)*2-1) * 3
+            grid_array[abs(item_y)][abs(item_x)] = "?"
+            for y in range(len(item_stats)):
+                if y == 6:
+                    info_array[x+1][y] = item_x
+                elif y == 7:
+                    info_array[x+1][y] = item_y
+                else:
+                    info_array[x+1][y] = item_stats[y]
+        #Now let's repeat it all for the door spawn except make that much farther away
+        else:
+            item_stats = enemy_dict["<"]
+            item_y = random.randint(0,room_height-1)
+            item_x = random.randint(0,room_width-1)
+            #I think we want to spawn items with the same rules as enemies
+            #10 spaces around the player on all directions nothing can init spawn
+            if abs(item_y - player_y) <= 10 and abs(item_x - 20) <= 10:
+                item_x += (random.randint(0,1)*2-1) * 3
+                item_y += (random.randint(0,1)*2-1) * 3
+            while grid_array[item_y][item_x] != " ":
+                item_x += random.randint(0,1)*2-1
+                item_y += random.randint(0,1)*2-1
+                if item_y < 1:
+                    item_y += 2
+                if item_y > (room_height - 2):
+                    item_y -= 2
+                if item_x < 1:
+                    item_x += 2
+                if item_x > (room_width - 2):
+                    item_x -= 2
+                if abs(item_y - player_y) <= 10 and abs(item_x - player_x) <= 10:
+                    item_x += (random.randint(0,1)*2-1) * 10
+                    item_y += (random.randint(0,1)*2-1) * 10
+            grid_array[abs(item_y)][abs(item_x)] = "?"
+            for y in range(len(item_stats)):
+                if y == 6:
+                    info_array[x+1][y] = item_x
+                elif y == 7:
+                    info_array[x+1][y] = item_y
+                else:
+                    info_array[x+1][y] = item_stats[y]
+
     
     #Lastly let's create the game stats
     await game_info.save_game_stats(raw_data, info_array)
