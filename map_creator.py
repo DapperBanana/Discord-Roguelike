@@ -168,11 +168,11 @@ async def generate_map(raw_data):
             grid_array[abs(item_y)][abs(item_x)] = "?"
             for y in range(len(item_stats)):
                 if y == 6:
-                    info_array[x+1][y] = item_x
+                    info_array[x+amount_of_enemies+1][y] = item_x
                 elif y == 7:
-                    info_array[x+1][y] = item_y
+                    info_array[x+amount_of_enemies+1][y] = item_y
                 else:
-                    info_array[x+1][y] = item_stats[y]
+                    info_array[x+amount_of_enemies+1][y] = item_stats[y]
         #Now let's repeat it all for the door spawn except make that much farther away
         else:
             item_stats = enemy_dict["<"]
@@ -197,14 +197,14 @@ async def generate_map(raw_data):
                 if abs(item_y - player_y) <= 10 and abs(item_x - player_x) <= 10:
                     item_x += (random.randint(0,1)*2-1) * 10
                     item_y += (random.randint(0,1)*2-1) * 10
-            grid_array[abs(item_y)][abs(item_x)] = "?"
+            grid_array[abs(item_y)][abs(item_x)] = "<"
             for y in range(len(item_stats)):
                 if y == 6:
-                    info_array[x+1][y] = item_x
+                    info_array[x+amount_of_enemies+1][y] = item_x
                 elif y == 7:
-                    info_array[x+1][y] = item_y
+                    info_array[x+amount_of_enemies+1][y] = item_y
                 else:
-                    info_array[x+1][y] = item_stats[y]
+                    info_array[x+amount_of_enemies+1][y] = item_stats[y]
 
     
     #Lastly let's create the game stats
