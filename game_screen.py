@@ -75,7 +75,37 @@ async def resolve_screen(raw_input):
         for x in range(player_view_x*2+1):
             viewable_grid[y][x] = grid_array[y + viewable_grid_y_start][x + viewable_grid_x_start]
 
-    numpy.savetxt("current_view.txt", viewable_grid, fmt='%s')
+    #Now that we have the viewable area, we want to go and place everything onto the actual game screen
+    blank_space = " "
+    game_screen_width = 42
+    game_screen_height = 16
+    #Next let's set up the complete game screen
+    game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
+    stats_grid = [[' ',' ',' ',' ',' ',"S", "t", "a", "t", "s"],
+                [' ',' ',' ',' ',' ',"-","-","-","-","-"],
+                ['H','e','a','l','t','h',' ',':',' '],
+                ['M','a','n','a',' ',' ',' ',':',' '],
+                ['A','r','m','o','u','r',' ',':',' '],
+                ['W','e','a','p','o','n',' ',':',' '],
+                ['A','t','t','a','c','k',' ',':',' '],
+                ['E','v','a','d','e',' ',' ',':',' '],
+                [' ']]
+    level_strings = [["M","o","u","n","t"," ","P","a",'r','t','h','i','l',' ','C','a','t','a','c','o','m','b','s'],
+                    [' ',' ',' ',' ',' ',' ',' ',' ','L','e','v','e','l',' ','1']]
+    for y in range(len(game_screen)):
+        for x in range(len(game_screen[y])):
+            #First lets print the stats on the side and then figure the if statement out for the viewable screen
+            if y < len(stats_grid) and x >= 17:
+                if (x - 17)  < len(stats_grid[y]):
+                    game_screen[y][x] = stats_grid[y][x-17]
+            elif y >=14 and x >= 2:
+                if (x - 2) < len(level_strings[y-14]):
+                    game_screen[y][x] = level_strings[y-14][x-2]
+            #Need to set up the confines on where the viewable screen can print
+            elif y >= 2 and y <= 12 and x >= 3 and x <= 13:
+                game_screen[y][x] = viewable_grid[y-2][x-3]
+
+    numpy.savetxt("current_view.txt", game_screen, fmt='%s')
     f = open("current_view.txt", 'r')
     await raw_input.channel.send("```" + f.read() + "```") 
 
