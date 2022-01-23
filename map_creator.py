@@ -112,7 +112,7 @@ async def generate_map(raw_data):
         enemy_stats = enemy_dict[enemy_character]
         enemy_y = random.randint(0,room_height-1)
         enemy_x = random.randint(0,room_width-1)
-        if abs(enemy_y - player_y) <= 3 and abs(player_x - 20) <= 3:
+        if abs(enemy_y - player_y) <= 3 and abs(enemy_x - player_x) <= 3:
             enemy_x += (random.randint(0,1)*2-1) * 3
             enemy_y += (random.randint(0,1)*2-1) * 3
         while grid_array[enemy_y][enemy_x] != " ":
@@ -148,7 +148,7 @@ async def generate_map(raw_data):
             item_x = random.randint(0,room_width-1)
             #I think we want to spawn items with the same rules as enemies
             #3 spaces around the player on all directions nothing can init spawn
-            if abs(item_y - player_y) <= 3 and abs(item_x - 20) <= 3:
+            if abs(item_y - player_y) <= 3 and abs(item_x - player_x) <= 3:
                 item_x += (random.randint(0,1)*2-1) * 3
                 item_y += (random.randint(0,1)*2-1) * 3
             while grid_array[item_y][item_x] != " ":
@@ -180,7 +180,7 @@ async def generate_map(raw_data):
             item_x = random.randint(0,room_width-1)
             #I think we want to spawn items with the same rules as enemies
             #10 spaces around the player on all directions nothing can init spawn
-            if abs(item_y - player_y) <= 10 and abs(item_x - 20) <= 10:
+            if abs(item_y - player_y) <= 10 and abs(item_x - player_x) <= 10:
                 item_x += (random.randint(0,1)*2-1) * 3
                 item_y += (random.randint(0,1)*2-1) * 3
             while grid_array[item_y][item_x] != " ":
