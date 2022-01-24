@@ -79,7 +79,7 @@ async def resolve_screen(raw_input):
     level_val = 1
     blank_space = " "
     game_screen_width = 42
-    game_screen_height = 16
+    game_screen_height = 17
     #Next let's set up the complete game screen
     game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
     stats_grid = [['     Stats'],
@@ -97,15 +97,15 @@ async def resolve_screen(raw_input):
     for y in range(len(game_screen)):
         for x in range(len(game_screen[y])):
             #First lets print the stats on the side and then figure the if statement out for the viewable screen
-            if y < len(stats_grid) and x >= 17:
-                if (x - 17)  < len(stats_grid[y]):
-                    game_screen[y][x] = stats_grid[y][x-17]
-            elif y >=14 and x >= 2:
-                if (x - 2) < len(level_strings[y-14]):
-                    game_screen[y][x] = level_strings[y-14][x-2]
+            if y < len(stats_grid) and x >= 13:
+                if (x - 13)  < len(stats_grid[y]):
+                    game_screen[y][x] = stats_grid[y][x-13]
+            elif y >=14 and x >= 1:
+                if (x - 1) < len(level_strings[y-14]):
+                    game_screen[y][x] = level_strings[y-14][x-1]
             #Need to set up the confines on where the viewable screen can print
-            elif y >= 2 and y <= 12 and x >= 3 and x <= 13:
-                game_screen[y][x] = viewable_grid[y-2][x-3]
+            elif y >= 2 and y <= 12 and x >= 1 and x <= 11:
+                game_screen[y][x] = viewable_grid[y-2][x-1]
 
     numpy.savetxt("current_view.txt", game_screen, fmt='%s')
     f = open("current_view.txt", 'r')
