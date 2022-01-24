@@ -100,9 +100,9 @@ async def resolve_screen(raw_input):
             if y < len(stats_grid) and x >= 13:
                 if (x - 13)  < len(stats_grid[y]):
                     game_screen[y][x] = stats_grid[y][x-13]
-            elif y >=14 and x >= 1:
-                if (x - 1) < len(level_strings[y-14]):
-                    game_screen[y][x] = level_strings[y-14][x-1]
+            elif y >=14 and x >= 3:
+                if (x - 3) < len(level_strings[y-14]):
+                    game_screen[y][x] = level_strings[y-14][x-3]
             #Need to set up the confines on where the viewable screen can print
             elif y >= 2 and y <= 12 and x >= 1 and x <= 11:
                 game_screen[y][x] = viewable_grid[y-2][x-1]
