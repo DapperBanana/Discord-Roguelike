@@ -76,22 +76,23 @@ async def resolve_screen(raw_input):
             viewable_grid[y][x] = grid_array[y + viewable_grid_y_start][x + viewable_grid_x_start]
 
     #Now that we have the viewable area, we want to go and place everything onto the actual game screen
+    level_val = 1
     blank_space = " "
     game_screen_width = 42
     game_screen_height = 16
     #Next let's set up the complete game screen
     game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
-    stats_grid = [[' ',' ',' ',' ',' ',"S", "t", "a", "t", "s"],
-                [' ',' ',' ',' ',' ',"-","-","-","-","-"],
-                ['H','e','a','l','t','h',' ',':',' '],
-                ['M','a','n','a',' ',' ',' ',':',' '],
-                ['A','r','m','o','u','r',' ',':',' '],
-                ['W','e','a','p','o','n',' ',':',' '],
-                ['A','t','t','a','c','k',' ',':',' '],
+    stats_grid = [['     Stats'],
+                ['     -----'],
+                ['Health : '],
+                ['Mana   : '],
+                ['Armour : '],
+                ['Weapon : '],
+                ['Attack : '],
                 ['Evade  : '],
                 [' ']]
     level_strings = [["M","o","u","n","t"," ","P","a",'r','t','h','i','l',' ','C','a','t','a','c','o','m','b','s'],
-                    [' ',' ',' ',' ',' ',' ',' ',' ','L','e','v','e','l',' ','1']]
+                    [' ',' ',' ',' ',' ',' ',' ',' ','L','e','v','e','l',' ',level_val]]
     for y in range(len(game_screen)):
         for x in range(len(game_screen[y])):
             #First lets print the stats on the side and then figure the if statement out for the viewable screen
