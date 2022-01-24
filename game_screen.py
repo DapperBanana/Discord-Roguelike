@@ -84,15 +84,16 @@ async def resolve_screen(raw_input):
     game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
     stats_grid = [['     Stats'],
                 ['     -----'],
-                ['Health : '],
-                ['Mana   : '],
-                ['Armour : '],
-                ['Weapon : '],
-                ['Attack : '],
-                ['Evade  : '],
+                ['Health :'],
+                ['Mana   :'],
+                ['Armour :'],
+                ['Weapon :'],
+                ['Attack :'],
+                ['Evade  :'],
                 [' ']]
-    level_strings = [["M","o","u","n","t"," ","P","a",'r','t','h','i','l',' ','C','a','t','a','c','o','m','b','s'],
-                    [' ',' ',' ',' ',' ',' ',' ',' ','L','e','v','e','l',' ',level_val]]
+    level_strings = [["M","o","u","n","t"," ","P","a",'r','t','h','i','l'],
+                    [' ',' ','C','a','t','a','c','o','m','b','s'],
+                    [' ',' ',' ','L','e','v','e','l',' ',level_val]]
     for y in range(len(game_screen)):
         for x in range(len(game_screen[y])):
             #First lets print the stats on the side and then figure the if statement out for the viewable screen
