@@ -71,7 +71,7 @@ enemy_path_list = {
 async def save_game_stats(raw_input, entity_list):
 
     author_name = raw_input.author.id
-    numpy.savetxt("info_" + str(author_name) + ".txt", entity_list, fmt='%s')
+    numpy.savetxt("info_" + str(author_name) + ".txt", entity_list, fmt='%s', delimiter=",")
 
 async def force_update(raw_input, update_array):
     fname = "info_" + str(raw_input.author.id) + ".txt"
