@@ -34,17 +34,20 @@ enemy_list = {
 
 #Determines how to read the stats
 stats_reader = {
-    0 : "char_sprite",
-    1 : "strength",
-    2 : "health",
-    3 : "mana",
-    4 : "level",
-    5 : "item", #2 is random item, #3 is door, figured I could implement more item types as time goes on
-    6 : "entity_x",
-    7 : "entity_y",
-    8 : "next_direction",
-    9 : "cycle_val",
-    10 : "battle"
+    0 : "entity_val",
+    1 : "char_sprite",
+    2 : "strength",
+    3 : "health",
+    4 : "mana",
+    5 : "level",
+    6 : "item", #2 is random item, #3 is door, figured I could implement more item types as time goes on
+    7 : "armor",
+    8 : "weapon",
+    9 : "entity_x",
+    10 : "entity_y",
+    11 : "next_direction",
+    12 : "cycle_val",
+    13 : "battle"
 }
 
 #How long the enemy path cycle is before deciding upon a new direction
@@ -70,3 +73,19 @@ async def save_game_stats(raw_input, entity_list):
     author_name = raw_input.author.id
     numpy.savetxt("info_" + str(author_name) + ".txt", entity_list, fmt='%s')
 
+async def force_update(raw_input, update_array):
+    fname = "info_" + str(raw_input.author.id) + ".txt"
+    info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+    entity_val = update_array[0]
+    #load in old info
+    for row in range(len(info_array)):
+        if info_array[row][0] == entity_val:
+            old_array = info_array[row]
+    for element in range(len(update_array)):
+        if update_array[element] == "NULL":
+            update_array[element] = old_array[element]
+    #next save it back to the info file
+    for row in range(len(info_array)):
+        if info_array[row][0] == entity_val:
+            info_array[row] = update_array
+    await save_game_stats(raw_input, info_array)

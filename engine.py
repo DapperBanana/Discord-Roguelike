@@ -6,6 +6,7 @@ import glob
 import time
 import numpy
 import game_screen
+import game_info
 from map_creator import generate_map
 from game_screen import resolve_screen
 from discord.ext import commands
@@ -21,7 +22,13 @@ from discord.ext import commands
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 defaultval = 100
-
+monster_gallery = [
+                "m",
+                "b",
+                "s",
+                "p"]
+battle_commands = ["slash",
+                "cast"]
 active_command_list = ["logout",
                 "login",
                 "end mission",
@@ -29,13 +36,11 @@ active_command_list = ["logout",
                 "pause",
                 "print",
                 "enter"]
-
 starting_command_list = [  "login",
                     "continue",
                     "new game",
                     "test"
                     ]
-
 movement_list = ["n",
                 "e",
                 "s",
@@ -46,8 +51,6 @@ movement_list = ["n",
                 "west",
                 "up",
                 "down"]
-
-starting_credits_latch = 1
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  __   __  _______  _______  ___   _          __   __  _______  _______  ______            ___   ______  
@@ -66,6 +69,7 @@ async def check_user_id(user_id):
     exists = "na"
     active_file = False
     active_credits = False
+    active_battle = False
     #Check for a an active file recorded for this person
     for name in glob.glob('active_*.txt'):
         #If any name exists that means there is an active file
@@ -76,7 +80,9 @@ async def check_user_id(user_id):
             exists = True
             if os.path.isfile('./credits_' + str(user_id) + ".txt"):
                 active_credits = True
-            ret_list = [active, exists, active_file, active_credits]
+            if os.path.isfile('./battle_' + str(user_id) + ".txt"):
+                active_battle = True
+            ret_list = [active, exists, active_file, active_credits, active_battle]
             return ret_list
             #There shouldn't be any more active files than 1, but just in case we're nesting a return into here (That would be a bug for future me to figure out))
     
@@ -88,7 +94,7 @@ async def check_user_id(user_id):
     else:
         exists = False
 
-    ret_list = [active, exists, active_file, active_credits]
+    ret_list = [active, exists, active_file, active_credits, active_battle]
     return ret_list
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,6 +113,7 @@ async def engine(text_input, user_id_info):
     is_user_alive = user_id_info[1]
     is_active_file = user_id_info[2]
     is_credits = user_id_info[3]
+    is_battle = user_id_info[4]
     username = text_input.author.name
 
     if not is_active_user:
@@ -151,15 +158,24 @@ async def engine(text_input, user_id_info):
                     #await text_input.channel.purge(limit=defaultval)
                     for x in range(iteration):
                         #I want to move the player using:
+                        await encounter_space(mov_dir, str(text_input.author.id), text_input)
                         text = await move_player(mov_dir, str(text_input.author.id), text_input)
-                        await resolve_screen(text_input)
-                        if text != "null":
-                            await text_input.channel.send(text)
+                        enemy = await move_enemies(text_input)
+                        if enemy == "ebattle":
+                            await start_battle(enemy, text_input)
+                        elif text == "pbattle":
+                            await start_battle(text, text_input)
+                        else:
+                            await resolve_screen(text_input)
+                            if text != "null":
+                                await text_input.channel.send(text)
 
                 else:
                     await text_input.channel.send(command)
             else:
                 await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
+        elif is_battle:
+            await text_input.channel.send("in battle!")
         else:
             if str(text_input.content).lower() == "next":
                 await game_screen.print_credits(text_input, False)
@@ -259,28 +275,28 @@ async def move_player(direction, player_name, raw_input):
             if grid_array[y][x] == "&":
                 player_x = x
                 player_y = y
-    old_x = player_x
-    old_y = player_y
     #next let's move in one of the four possible directions and update the map
-    if direction == 0:
-        player_y -= 1
-    elif direction == 1:
-        player_x += 1
-    elif direction == 2:
-        player_y += 1
-    elif direction == 3:
-        player_x -= 1
-    if grid_array[player_y][player_x] == "#":
+    encounter_char, new_x, new_y = encounter_space(direction, player_x, player_y, raw_input)
+    if encounter_char == "#":
         val = "There is a wall there!"
     else:
-        #update the player location in the active file
-        #erase the previous location for the player
-        grid_array[old_y][old_x] = " "
-        grid_array[player_y][player_x] = "&"
+        in_battle = 0
+        for monster in monster_gallery:
+            if encounter_char == monster:
+                in_battle = 1
+        update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", new_x, new_y, "NULL", "NULL", in_battle]
+        await game_info.force_update(raw_input, update_info)
+        #So now we have updated the game info file, and moved the player ahead
+        grid_array[player_y][player_x] = " "
+        grid_array[new_y][new_x] = "&"
         #save it to the active player file
         file_name = "active_" + str(player_name) + ".txt"
-        numpy.savetxt(file_name, grid_array, fmt='%s')
-        val = "null"
+        await numpy.savetxt(file_name, grid_array, fmt='%s')
+        if in_battle:
+            val = "pbattle"
+        else:
+            val = "null"
+        
     return val
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -381,13 +397,92 @@ async def input_parse(raw_input):
 #|_______||_|  |__||_______||_|   |_|  |___|    |___|    |__| |__|  |___|  |__| |__||___|    |___| |_|  |__||______| |___| |_|  |__||_______|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+async def move_enemies(raw_input):
+    await raw_input.channel.send("move enemies!")
+    return "NULL"
 
-#
-#
-#
-#
-#
-#
-#
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# _______  __    _  _______  _______  __   __  __    _  _______  _______  ______      _______  __   __  _______  _______  _______  __   __ 
+#|       ||  |  | ||       ||       ||  | |  ||  |  | ||       ||       ||    _ |    |       ||  | |  ||       ||       ||       ||  |_|  |
+#|    ___||   |_| ||       ||   _   ||  | |  ||   |_| ||_     _||    ___||   | ||    |  _____||  |_|  ||  _____||_     _||    ___||       |
+#|   |___ |       ||       ||  | |  ||  |_|  ||       |  |   |  |   |___ |   |_||_   | |_____ |       || |_____   |   |  |   |___ |       |
+#|    ___||  _    ||      _||  |_|  ||       ||  _    |  |   |  |    ___||    __  |  |_____  ||_     _||_____  |  |   |  |    ___||       |
+#|   |___ | | |   ||     |_ |       ||       || | |   |  |   |  |   |___ |   |  | |   _____| |  |   |   _____| |  |   |  |   |___ | ||_|| |
+#|_______||_|  |__||_______||_______||_______||_|  |__|  |___|  |_______||___|  |_|  |_______|  |___|  |_______|  |___|  |_______||_|   |_|
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+async def encounter_space(direction, entity_x, entity_y, raw_input):
+    #First things first we want to load the map into an array
+    with open("active_" + str(raw_input.author.id) + ".txt") as f:
+        input_grid = f.readlines()
+        input_grid = [row.rstrip('\n') for row in input_grid]
+        room_width = len(input_grid)
+        room_height = int((len(input_grid[0]) + 1) / 2)
+        #Now that we have the grid let's remove the whitespaces
+        void = "-"
+        grid_array = [[void for i in range(room_height)] for j in range(room_width)]
+        for y in range(0,len(input_grid)-1):
+            for x in range(0,len(input_grid[0])-1):
+                if x % 2 == 0:
+                    grid_array[y][int(x/2)] = input_grid[y][x]
+    #Next lets grab the x and y of the space that the entity is encountering
+    encounter_x = entity_x
+    encounter_y = entity_y
+    if direction == 0:
+        encounter_y -= 1
+    elif direction == 1:
+        encounter_x += 1
+    elif direction == 2:
+        encounter_y += 1
+    elif direction == 3:
+        encounter_x -= 1
+    return_char = grid_array[encounter_y][encounter_x]
+    return return_char, encounter_x, encounter_y
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# _______  _______  _______  ______    _______    _______  _______  _______  _______  ___      _______ 
+#|       ||       ||   _   ||    _ |  |       |  |  _    ||   _   ||       ||       ||   |    |       |
+#|  _____||_     _||  |_|  ||   | ||  |_     _|  | |_|   ||  |_|  ||_     _||_     _||   |    |    ___|
+#| |_____   |   |  |       ||   |_||_   |   |    |       ||       |  |   |    |   |  |   |    |   |___ 
+#|_____  |  |   |  |       ||    __  |  |   |    |  _   | |       |  |   |    |   |  |   |___ |    ___|
+# _____| |  |   |  |   _   ||   |  | |  |   |    | |_|   ||   _   |  |   |    |   |  |       ||   |___ 
+#|_______|  |___|  |__| |__||___|  |_|  |___|    |_______||__| |__|  |___|    |___|  |_______||_______|
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+async def start_battle(initiate, raw_input):
+    #I'll have to use the raw input to get the x and y and of the battle through the info file
+    await raw_input.channel.send("start battle")
+    fname = "battle_" + str(raw_input.author.id) + ".txt"
+    x = [1]
+    numpy.savetxt(fname, x)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# _______  _______  _______  _______  ___      _______    ______    _______  __   __  __    _  ______  
+#|  _    ||   _   ||       ||       ||   |    |       |  |    _ |  |       ||  | |  ||  |  | ||      | 
+#| |_|   ||  |_|  ||_     _||_     _||   |    |    ___|  |   | ||  |   _   ||  | |  ||   |_| ||  _    |
+#|       ||       |  |   |    |   |  |   |    |   |___   |   |_||_ |  | |  ||  |_|  ||       || | |   |
+#|  _   | |       |  |   |    |   |  |   |___ |    ___|  |    __  ||  |_|  ||       ||  _    || |_|   |
+#| |_|   ||   _   |  |   |    |   |  |       ||   |___   |   |  | ||       ||       || | |   ||       |
+#|_______||__| |__|  |___|    |___|  |_______||_______|  |___|  |_||_______||_______||_|  |__||______| 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+async def battle_round(raw_input):
+    #This is where we'll reopen the battle file and continue
+    fname = "battle_" + str(raw_input.author.id) + ".txt"
+    os.remove(fname)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                 __    _  _______  __   __  _______                 
+#                |  |  | ||   _   ||  |_|  ||       |                
+#                |   |_| ||  |_|  ||       ||    ___|                
+#                |       ||       ||       ||   |___                 
+#                |  _    ||       ||       ||    ___|                
+# _____   _____  | | |   ||   _   || ||_|| ||   |___  _____   _____  
+#|_____| |_____| |_|  |__||__| |__||_|   |_||_______||_____| |_____| 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 if __name__ == '__main__':
     engine()
