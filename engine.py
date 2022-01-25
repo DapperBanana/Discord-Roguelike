@@ -290,7 +290,7 @@ async def move_player(direction, player_name, raw_input):
         grid_array[new_y][new_x] = "&"
         #save it to the active player file
         file_name = "active_" + str(player_name) + ".txt"
-        await numpy.savetxt(file_name, grid_array, fmt='%s')
+        numpy.savetxt(file_name, grid_array, fmt='%s')
         if in_battle:
             val = "pbattle"
         else:
