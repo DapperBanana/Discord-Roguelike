@@ -147,34 +147,35 @@ async def engine(text_input, user_id_info):
 
     if is_active_user:
         if not is_credits:
-            if str(text_input.content).lower() == "help":
-                f = open("help_screen.txt", 'r')
-                await text_input.channel.send("```" + f.read() + "```")
-            #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
-            is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input)
-            if is_command:
-                if is_movement:
-                    #Haven't decided whether or not I want the player to have a log of their moves
-                    #await text_input.channel.purge(limit=defaultval)
-                    for x in range(iteration):
-                        #I want to move the player using:
-                        text = await move_player(mov_dir, str(text_input.author.id), text_input)
-                        enemy = await move_enemies(text_input)
-                        if enemy == "ebattle":
-                            await start_battle(enemy, text_input)
-                        elif text == "pbattle":
-                            await start_battle(text, text_input)
-                        else:
-                            await resolve_screen(text_input)
-                            if text != "null":
-                                await text_input.channel.send(text)
-
+            if not is_battle:
+                if str(text_input.content).lower() == "help":
+                    f = open("help_screen.txt", 'r')
+                    await text_input.channel.send("```" + f.read() + "```")
+                #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
+                is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input)
+                if is_command:
+                    if is_movement:
+                        #Haven't decided whether or not I want the player to have a log of their moves
+                        #await text_input.channel.purge(limit=defaultval)
+                        for x in range(iteration):
+                            #I want to move the player using:
+                            text = await move_player(mov_dir, str(text_input.author.id), text_input)
+                            enemy = await move_enemies(text_input)
+                            if enemy == "ebattle":
+                                await start_battle(enemy, text_input)
+                            elif text == "pbattle":
+                                await start_battle(text, text_input)
+                            else:
+                                await resolve_screen(text_input)
+                                if text != "null":
+                                    await text_input.channel.send(text)
+                    else:
+                        await text_input.channel.send(command)
                 else:
-                    await text_input.channel.send(command)
+                    await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
             else:
-                await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
-        elif is_battle:
-            await text_input.channel.send("in battle!")
+                await text_input.channel.send("in battle!")
+                await battle_round(text_input)
         else:
             if str(text_input.content).lower() == "next":
                 await game_screen.print_credits(text_input, False)
