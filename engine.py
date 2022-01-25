@@ -275,7 +275,7 @@ async def move_player(direction, player_name, raw_input):
                 player_x = x
                 player_y = y
     #next let's move in one of the four possible directions and update the map
-    encounter_char, new_x, new_y = encounter_space(direction, player_x, player_y, raw_input)
+    encounter_char, new_x, new_y = await encounter_space(direction, player_x, player_y, raw_input)
     if encounter_char == "#":
         val = "There is a wall there!"
     else:
