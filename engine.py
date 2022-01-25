@@ -158,7 +158,6 @@ async def engine(text_input, user_id_info):
                     #await text_input.channel.purge(limit=defaultval)
                     for x in range(iteration):
                         #I want to move the player using:
-                        await encounter_space(mov_dir, str(text_input.author.id), text_input)
                         text = await move_player(mov_dir, str(text_input.author.id), text_input)
                         enemy = await move_enemies(text_input)
                         if enemy == "ebattle":
