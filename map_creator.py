@@ -81,17 +81,17 @@ async def generate_map(raw_data):
     #unless I throw the level inside a stats page... Could do that... I'll think about it.
     #First anyways I'm just gonna spawn some basic enemies into a level and disregard difficulty scale according to level
     enemy_dict = {
-        "m" : ["m", 1, 2, 0, 1, 0, -1, -1, -1, 4, 0],
-        "b" : ["b", 2, 2, 0, 1, 0, -1, -1, -1, 4, 0],
-        "s" : ["s", 3, 2, 1, 1, 0, -1, -1, -1, 4, 0],
-        "p" : ["p", 2, 2, 1, 1, 0, -1, -1, -1, 2, 0],
-        "w" : ["w", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # Need
-        "S" : ["S", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # to
-        "I" : ["I", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # work
-        "W" : ["W", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # on
-        "!" : ["!", 9, 9, 9, 9, 0, -1, -1, -1, 0, 0], # these
-        "?" : ["?", 0, 0, 0, 0, 2, -1, -1, -1, 0, 0],
-        "<" : ["<", 0, 0, 0, 0, 1, -1, -1, -1, 0, 0]
+        "m" : ["m", '1', '2', '0', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
+        "b" : ["b", '2', '2', '0', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
+        "s" : ["s", '3', '2', '1', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
+        "p" : ["p", '2', '2', '1', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
+        "w" : ["w", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # Need
+        "S" : ["S", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # to
+        "I" : ["I", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # work
+        "W" : ["W", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # on
+        "!" : ["!", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # these
+        "?" : ["?", '0', '0', '0', '0', '2', '0', '0', '-1', '-1', '-1', '0', '0'],
+        "<" : ["<", '0', '0', '0', '0', '1', '0', '0', '-1', '-1', '-1', '0', '0']
     }
     enemy_list = [
         "m",
@@ -102,10 +102,12 @@ async def generate_map(raw_data):
     level = 1
     amount_of_enemies = level * random.randint(1,5)
     amount_of_items = (level * random.randint(1,2)) + 1 #Items spawns are going to be based on the level you're on, and there'll only be one door per level
-    player_info = ["&", 3, 10, 0, 1, 0, player_x, player_y, -1, -1, 0]
-    info_array = [[void for i in range(len(player_info))] for j in range(amount_of_enemies + amount_of_items + 1)]
+    player_info = ["&", "3", "10", "0", level, "0", "1", "1", player_x, player_y, "-1", "-1", "0"]
+    info_array = [[void for i in range(len(player_info) + 1)] for j in range(amount_of_enemies + amount_of_items + 1)]
+    for entity_val in range(amount_of_enemies + amount_of_items + 1):
+        info_array[entity_val][0] = str(entity_val + 1)
     for x in range(len(player_info)):
-        info_array[0][x] = player_info[x]
+        info_array[0][x+1] = player_info[x]
     for x in range(amount_of_enemies):
         enemy_val = random.randint(0, len(enemy_list)-1)
         enemy_character = enemy_list[enemy_val]
@@ -132,14 +134,14 @@ async def generate_map(raw_data):
         grid_array[abs(enemy_y)][abs(enemy_x)] = enemy_character
         for y in range(len(enemy_stats)):
             if y == 6:
-                info_array[x+1][y] = enemy_x
+                info_array[x+1][y+1] = enemy_x
             elif y == 7:
-                info_array[x+1][y] = enemy_y
+                info_array[x+1][y+1] = enemy_y
             elif y == 8:
                 next_direction = random.randint(0,3)
-                info_array[x+1][y] = next_direction
+                info_array[x+1][y+1] = next_direction
             else:
-                info_array[x+1][y] = enemy_stats[y]
+                info_array[x+1][y+1] = enemy_stats[y]
     for x in range(amount_of_items):
         #First value is going to be the door and then we'll spawn in the items
         if x > 0:
@@ -168,11 +170,11 @@ async def generate_map(raw_data):
             grid_array[abs(item_y)][abs(item_x)] = "?"
             for y in range(len(item_stats)):
                 if y == 6:
-                    info_array[x+amount_of_enemies+1][y] = item_x
+                    info_array[x+amount_of_enemies+1][y+1] = item_x
                 elif y == 7:
-                    info_array[x+amount_of_enemies+1][y] = item_y
+                    info_array[x+amount_of_enemies+1][y+1] = item_y
                 else:
-                    info_array[x+amount_of_enemies+1][y] = item_stats[y]
+                    info_array[x+amount_of_enemies+1][y+1] = item_stats[y]
         #Now let's repeat it all for the door spawn except make that much farther away
         else:
             item_stats = enemy_dict["<"]
@@ -200,11 +202,11 @@ async def generate_map(raw_data):
             grid_array[abs(item_y)][abs(item_x)] = "<"
             for y in range(len(item_stats)):
                 if y == 6:
-                    info_array[x+amount_of_enemies+1][y] = item_x
+                    info_array[x+amount_of_enemies+1][y+1] = item_x
                 elif y == 7:
-                    info_array[x+amount_of_enemies+1][y] = item_y
+                    info_array[x+amount_of_enemies+1][y+1] = item_y
                 else:
-                    info_array[x+amount_of_enemies+1][y] = item_stats[y]
+                    info_array[x+amount_of_enemies+1][y+1] = item_stats[y]
 
     
     #Lastly let's create the game stats
