@@ -633,7 +633,7 @@ async def battle_round(raw_input):
             info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
             for row in range(len(info_array)):
                 if row > 0 and int(info_array[row][13]) == 1:
-                    entity_val = info_array[row][0]
+                    entity_val = int(info_array[row][0])
             entity_char = str(info_array[entity_val-1][1])
             #Let's hurt the player and such
             total_player_attack = int(info_array[0][8]) + int(info_array[0][2])
