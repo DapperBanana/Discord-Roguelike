@@ -450,15 +450,15 @@ async def move_enemies(raw_input):
     #Now that we have the amount of enemies, let's start cycling through them and updating everything.
     for enemy in range(amount_of_enemies):
         #First lets grab the units x and y
-        enemy_type = info_array[enemy + 2][1]
+        enemy_type = info_array[enemy + 1][1]
         str_to_print = "entity num " + str(enemy+2)
         print(str_to_print)
         print(enemy_type)
         #check if the enemy is dead first
         if enemy_type == "X":
             continue
-        enemy_x = int(info_array[enemy + 2][9]) #we add 2 to get back to the entity number
-        enemy_y = int(info_array[enemy + 2][10])
+        enemy_x = int(info_array[enemy + 1][9]) #we add 2 to get back to the entity number
+        enemy_y = int(info_array[enemy + 1][10])
         encounter_direction = 0
         #Now lets see if the enemy is near the player
         diff_x = abs(enemy_x - player_x)
@@ -498,6 +498,8 @@ async def move_enemies(raw_input):
         #Need to find out if the encountered area is an entity or not
         for entity in range(len(entity_list)):
             if encounter_char == entity_list[entity]:
+                str_to_print = "entity num " + str(enemy+2) + " hit " + encounter_char
+                print(str_to_print)
                 return "null"
         if encounter_char == "&":
             #If we've hit the player, we're gonna have to enter battle!
