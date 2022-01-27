@@ -538,6 +538,9 @@ async def move_enemies(raw_input):
             await game_info.force_update(raw_input, update_info)
             update_info = [str(enemy + 2), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", new_x, new_y, "NULL", "NULL", in_battle]
             await game_info.force_update(raw_input, update_info)
+            grid_array[enemy_y][enemy_x] = " "
+            file_name = "active_" + str(raw_input.author.id) + ".txt"
+            numpy.savetxt(file_name, grid_array, fmt='%s')
             return_val = "ebattle"
         elif hit_entity:
             continue
