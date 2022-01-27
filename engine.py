@@ -659,7 +659,7 @@ async def battle_round(raw_input):
                 in_battle = 0
                 update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                 await game_info.force_update(raw_input, update_info)
-                update_info = [str(entity_val + 1), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                 await game_info.force_update(raw_input, update_info)
                 fname = "battle_" + str(raw_input.author.id) + ".txt"
                 os.remove(fname)
