@@ -436,8 +436,8 @@ async def move_enemies(raw_input):
     fname = "info_" + str(raw_input.author.id) + ".txt"
     info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
     amount_of_enemies = 0
-    player_x = info_array[0][9]
-    player_y = info_array[0][10]
+    player_x = int(info_array[0][9])
+    player_y = int(info_array[0][10])
     #We know that the player character is on entity #1, we need to know how many enemies there are.
     #Luckily we know that they're sandwiched between the player and the door, so figure out where the door is, subtract 1 and that's the amount of enemies
     for row in range(len(info_array)):
@@ -450,8 +450,8 @@ async def move_enemies(raw_input):
         #check if the enemy is dead first
         if enemy_type == "X":
             continue
-        enemy_x = info_array[enemy + 2][9] #we add 2 to get back to the entity number
-        enemy_y = info_array[enemy + 2][10]
+        enemy_x = int(info_array[enemy + 2][9]) #we add 2 to get back to the entity number
+        enemy_y = int(info_array[enemy + 2][10])
         encounter_direction = 0
         #Now lets see if the enemy is near the player
         diff_x = abs(enemy_x - player_x)
