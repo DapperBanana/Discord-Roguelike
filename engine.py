@@ -463,6 +463,10 @@ async def move_enemies(raw_input):
         #check if the enemy is dead first
         if enemy_type == "X":
             continue
+        #next check if the enemy is in battle
+        in_battle = info_array[enemy + 1][13]
+        if int(in_battle) == 1:
+            continue
         enemy_x = int(info_array[enemy + 1][9]) #we add 2 to get back to the entity number
         enemy_y = int(info_array[enemy + 1][10])
         encounter_direction = 0
