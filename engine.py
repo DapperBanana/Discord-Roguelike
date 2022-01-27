@@ -300,6 +300,10 @@ async def move_player(direction, player_name, raw_input):
         fname = "info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
         for row in range(len(info_array)):
+            str_to_print = "player_x : " + str(new_x) + " | player_y : " + str(new_y)
+            print(str_to_print)
+            str_to_print = "entity_x : " + str(info_array[row][9]) + " | entity_y : " + str(info_array[row][10])
+            print(str_to_print)
             if row > 0 and info_array[row][9] == new_x and info_array[row][10] == new_y:
                 enemy_val = info_array[row][0]
                 update_info = [str(enemy_val), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
