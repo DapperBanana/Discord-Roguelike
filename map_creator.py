@@ -153,7 +153,7 @@ async def generate_map(raw_data):
             if abs(item_y - player_y) <= 3 and abs(item_x - player_x) <= 3:
                 item_x += (random.randint(0,1)*2-1) * 3
                 item_y += (random.randint(0,1)*2-1) * 3
-            while grid_array[item_y][item_x] != " ":
+            while grid_array[abs(item_y)][abs(item_x)] != " ":
                 item_x += random.randint(0,1)*2-1
                 item_y += random.randint(0,1)*2-1
                 if item_y < 1:
