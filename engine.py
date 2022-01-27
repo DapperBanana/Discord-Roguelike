@@ -629,8 +629,8 @@ async def battle_round(raw_input):
             #lets first find the enemy the player has encountered
             fname = "info_" + str(raw_input.author.id) + ".txt"
             entity_val = 0
-            entity_char = str(info_array[entity_val-1][1])
             info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+            entity_char = str(info_array[entity_val-1][1])
             for row in range(len(info_array)):
                 if row > 0 and int(info_array[row][13]) == 1:
                     entity_val = info_array[row][0]
