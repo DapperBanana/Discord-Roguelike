@@ -133,11 +133,11 @@ async def generate_map(raw_data):
                 enemy_y += (random.randint(0,1)*2-1) * 3
         grid_array[abs(enemy_y)][abs(enemy_x)] = enemy_character
         for y in range(len(enemy_stats)):
-            if y == 6:
+            if y == 8:
                 info_array[x+1][y+1] = enemy_x
-            elif y == 7:
+            elif y == 9:
                 info_array[x+1][y+1] = enemy_y
-            elif y == 8:
+            elif y == 10:
                 next_direction = random.randint(0,3)
                 info_array[x+1][y+1] = next_direction
             else:
@@ -169,9 +169,9 @@ async def generate_map(raw_data):
                     item_y += (random.randint(0,1)*2-1) * 3
             grid_array[abs(item_y)][abs(item_x)] = "?"
             for y in range(len(item_stats)):
-                if y == 6:
+                if y == 8:
                     info_array[x+amount_of_enemies+1][y+1] = item_x
-                elif y == 7:
+                elif y == 9:
                     info_array[x+amount_of_enemies+1][y+1] = item_y
                 else:
                     info_array[x+amount_of_enemies+1][y+1] = item_stats[y]
@@ -201,9 +201,9 @@ async def generate_map(raw_data):
                     item_y += (random.randint(0,1)*2-1) * 10
             grid_array[abs(item_y)][abs(item_x)] = "<"
             for y in range(len(item_stats)):
-                if y == 6:
+                if y == 8:
                     info_array[x+amount_of_enemies+1][y+1] = item_x
-                elif y == 7:
+                elif y == 9:
                     info_array[x+amount_of_enemies+1][y+1] = item_y
                 else:
                     info_array[x+amount_of_enemies+1][y+1] = item_stats[y]

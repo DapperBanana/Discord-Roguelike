@@ -459,6 +459,8 @@ async def move_enemies(raw_input):
             continue
         enemy_x = int(info_array[enemy + 1][9]) #we add 2 to get back to the entity number
         enemy_y = int(info_array[enemy + 1][10])
+        str_to_print = "x: " + str(enemy_x) + " | y: " + str(enemy_y)
+        print(str_to_print)
         encounter_direction = 0
         #Now lets see if the enemy is near the player
         diff_x = abs(enemy_x - player_x)
@@ -493,8 +495,10 @@ async def move_enemies(raw_input):
         else:
             #Screw the pathing for a bit and lets just move the enemies around randomly
             encounter_direction = random.randint(0,3)
-            
+        print(encounter_direction) 
         encounter_char, new_x, new_y = await encounter_space(encounter_direction,enemy_x, enemy_y, raw_input)
+        str_to_print = "encountered_char: (" + str(encounter_char) + ") | new_x: " + str(new_x) + " | new_y: " + str(new_y)
+        print(str_to_print)
         #Need to find out if the encountered area is an entity or not
         for entity in range(len(entity_list)):
             if encounter_char == entity_list[entity]:
