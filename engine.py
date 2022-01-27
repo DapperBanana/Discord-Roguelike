@@ -465,7 +465,7 @@ async def move_enemies(raw_input):
         #Now lets see if the enemy is near the player
         diff_x = abs(enemy_x - player_x)
         diff_y = abs(enemy_y - player_y)
-        if diff_x <= enemy_sight[enemy_type] and diff_y <= enemy_type[enemy_type]:
+        if diff_x <= int(enemy_sight[enemy_type]) and diff_y <= int(enemy_type[enemy_type]):
             #If within their sight, we want to grab which value is closest (if there is one)
             if diff_x == diff_y:
                 x_or_y = random.randint(0,1)*2-1
@@ -500,11 +500,12 @@ async def move_enemies(raw_input):
         str_to_print = "encountered_char: (" + str(encounter_char) + ") | new_x: " + str(new_x) + " | new_y: " + str(new_y)
         print(str_to_print)
         #Need to find out if the encountered area is an entity or not
+        hit_entity = False
         for entity in range(len(entity_list)):
             if encounter_char == entity_list[entity]:
                 str_to_print = "entity num " + str(enemy+2) + " hit " + encounter_char
                 print(str_to_print)
-                return "null"
+                hit_entity = True
         if encounter_char == "&":
             #If we've hit the player, we're gonna have to enter battle!
             #First update the info, then return the enemy battle tag
@@ -513,7 +514,9 @@ async def move_enemies(raw_input):
             await game_info.force_update(raw_input, update_info)
             update_info = [str(enemy + 2), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", new_x, new_y, "NULL", "NULL", in_battle]
             await game_info.force_update(raw_input, update_info)
-            return "ebattle"
+            return_val = "ebattle"
+        elif hit_entity:
+            continue
         else:
             #otherwise we hit a space and lets update the map and info with that
             update_info = [str(enemy + 2), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", new_x, new_y, "NULL", "NULL", "NULL"]
@@ -522,7 +525,8 @@ async def move_enemies(raw_input):
             grid_array[new_y][new_x] = enemy_type
             file_name = "active_" + str(raw_input.author.id) + ".txt"
             numpy.savetxt(file_name, grid_array, fmt='%s')
-    return "null"
+            return_val = "null"
+    return return_val
 
 
 
