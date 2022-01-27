@@ -305,15 +305,17 @@ async def move_player(direction, player_name, raw_input):
         for row in range(len(info_array)):
             str_to_print = "player_x : " + str(new_x) + " | player_y : " + str(new_y)
             print(str_to_print)
-            str_to_print = "entity_x : " + str(info_array[row][9]) + " | entity_y : " + str(info_array[row][10])
+            str_to_print = "entity_x : " + str(info_array[row][9]) + " | entity_y : " + str(info_array[row][10] )
             print(str_to_print)
-            if row > 0 and info_array[row][9] == new_x and info_array[row][10] == new_y:
-                enemy_val = info_array[row][0]
-                print("----------")
-                print("updating player")
-                update_info = [str(enemy_val), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
-                await game_info.force_update(raw_input, update_info)
-                print("----------")
+            print(row)
+            if row > 0:
+                if (int(info_array[row][9]) == new_x) and (int(info_array[row][10]) == new_y):
+                    enemy_val = info_array[row][0]
+                    print("----------")
+                    print("updating player")
+                    update_info = [str(enemy_val), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                    await game_info.force_update(raw_input, update_info)
+                    print("----------")
         #So now we have updated the game info file, and moved the player ahead
         grid_array[player_y][player_x] = " "
         grid_array[new_y][new_x] = "&"
