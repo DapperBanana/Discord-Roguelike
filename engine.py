@@ -448,6 +448,7 @@ async def move_enemies(raw_input):
             str_to_print = "there are " + str(amount_of_enemies) + " enemies"
             print(str_to_print)
     #Now that we have the amount of enemies, let's start cycling through them and updating everything.
+    return_val = "null"
     for enemy in range(amount_of_enemies):
         #First lets grab the units x and y
         enemy_type = info_array[enemy + 1][1]
@@ -538,7 +539,7 @@ async def move_enemies(raw_input):
             grid_array[new_y][new_x] = enemy_type
             file_name = "active_" + str(raw_input.author.id) + ".txt"
             numpy.savetxt(file_name, grid_array, fmt='%s')
-            return_val = "null"
+    
     return return_val
 
 
@@ -630,10 +631,10 @@ async def battle_round(raw_input):
             fname = "info_" + str(raw_input.author.id) + ".txt"
             entity_val = 0
             info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
-            entity_char = str(info_array[entity_val-1][1])
             for row in range(len(info_array)):
                 if row > 0 and int(info_array[row][13]) == 1:
                     entity_val = info_array[row][0]
+            entity_char = str(info_array[entity_val-1][1])
             #Let's hurt the player and such
             total_player_attack = int(info_array[0][8]) + int(info_array[0][2])
             total_player_health = int(info_array[0][7]) + int(info_array[0][3])
