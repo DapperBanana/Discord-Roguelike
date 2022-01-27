@@ -487,7 +487,7 @@ async def move_enemies(raw_input):
             #Screw the pathing for a bit and lets just move the enemies around randomly
             encounter_direction = random.randint(0,3)
             
-        encounter_char, new_x, new_y = encounter_space(encounter_direction,enemy_x, enemy_y, raw_input)
+        encounter_char, new_x, new_y = await encounter_space(encounter_direction,enemy_x, enemy_y, raw_input)
         #Need to find out if the encountered area is an entity or not
         for entity in range(len(entity_list)):
             if encounter_char == entity_list[entity]:
