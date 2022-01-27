@@ -465,7 +465,8 @@ async def move_enemies(raw_input):
         #Now lets see if the enemy is near the player
         diff_x = abs(enemy_x - player_x)
         diff_y = abs(enemy_y - player_y)
-        if diff_x <= int(enemy_sight[enemy_type]) and diff_y <= int(enemy_type[enemy_type]):
+        enemy_vis_length = enemy_sight[enemy_type]
+        if (diff_x <= int(enemy_vis_length)) and (diff_y <= int(enemy_vis_length)):
             #If within their sight, we want to grab which value is closest (if there is one)
             if diff_x == diff_y:
                 x_or_y = random.randint(0,1)*2-1
