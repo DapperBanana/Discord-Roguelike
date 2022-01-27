@@ -300,11 +300,7 @@ async def move_player(direction, player_name, raw_input):
         fname = "info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
         for row in range(len(info_array)):
-            str_to_print = "player_x : " + str(new_x) + " | player_y : " + str(new_y)
-            print(str_to_print)
-            str_to_print = "entity_x : " + str(info_array[row][8]) + " | entity_y : " + str(info_array[row][9])
-            print(str_to_print)
-            if row > 0 and info_array[row][8] == new_x and info_array[row][9] == new_y:
+            if row > 0 and info_array[row][9] == new_x and info_array[row][10] == new_y:
                 enemy_val = info_array[row][0]
                 update_info = [str(enemy_val), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                 await game_info.force_update(raw_input, update_info)
@@ -455,25 +451,16 @@ async def move_enemies(raw_input):
     for row in range(len(info_array)):
         if info_array[row][1] == "<":
             amount_of_enemies = int(info_array[row][0]) - 2
-            str_to_print = "door is entity num " + str(info_array[row][0])
-            print(str_to_print)
-            str_to_print = "there are " + str(amount_of_enemies) + " enemies"
-            print(str_to_print)
     #Now that we have the amount of enemies, let's start cycling through them and updating everything.
     return_val = "null"
     for enemy in range(amount_of_enemies):
         #First lets grab the units x and y
         enemy_type = info_array[enemy + 1][1]
-        str_to_print = "entity num " + str(enemy+2)
-        print(str_to_print)
-        print(enemy_type)
         #check if the enemy is dead first
         if enemy_type == "X":
             continue
         enemy_x = int(info_array[enemy + 1][9]) #we add 2 to get back to the entity number
         enemy_y = int(info_array[enemy + 1][10])
-        str_to_print = "x: " + str(enemy_x) + " | y: " + str(enemy_y)
-        print(str_to_print)
         encounter_direction = 0
         #Now lets see if the enemy is near the player
         diff_x = abs(enemy_x - player_x)
@@ -521,16 +508,11 @@ async def move_enemies(raw_input):
         else:
             #Screw the pathing for a bit and lets just move the enemies around randomly
             encounter_direction = random.randint(0,3)
-        print(encounter_direction) 
         encounter_char, new_x, new_y = await encounter_space(encounter_direction,enemy_x, enemy_y, raw_input)
-        str_to_print = "encountered_char: (" + str(encounter_char) + ") | new_x: " + str(new_x) + " | new_y: " + str(new_y)
-        print(str_to_print)
         #Need to find out if the encountered area is an entity or not
         hit_entity = False
         for entity in range(len(entity_list)):
             if encounter_char == entity_list[entity]:
-                str_to_print = "entity num " + str(enemy+2) + " hit " + encounter_char
-                print(str_to_print)
                 hit_entity = True
         if encounter_char == "&":
             #If we've hit the player, we're gonna have to enter battle!
