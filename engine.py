@@ -443,10 +443,14 @@ async def move_enemies(raw_input):
     for row in range(len(info_array)):
         if info_array[row][1] == "<":
             amount_of_enemies = int(info_array[row][0]) - 2
+            print(str("door is entity num " + int(info_array[row][0])))
+            print(str("there are " + amount_of_enemies + " enemies"))
     #Now that we have the amount of enemies, let's start cycling through them and updating everything.
     for enemy in range(amount_of_enemies):
         #First lets grab the units x and y
         enemy_type = info_array[enemy + 2][1]
+        print(str("entity num " + (enemy+2)))
+        print(enemy_type)
         #check if the enemy is dead first
         if enemy_type == "X":
             continue
