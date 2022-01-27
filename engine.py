@@ -482,15 +482,27 @@ async def move_enemies(raw_input):
                     else:
                         encounter_direction = 3
             elif diff_y < diff_x:
-                if enemy_y < player_y:
-                    encounter_direction = 2
+                if enemy_y != player_y:
+                    if enemy_y < player_y:
+                        encounter_direction = 2
+                    else:
+                        encounter_direction = 0
                 else:
-                    encounter_direction = 0
+                    if enemy_x < player_x:
+                        encounter_direction = 1
+                    else:
+                        encounter_direction = 3
             else:
-                if enemy_x < player_x:
-                    encounter_direction = 1
+                if enemy_x != player_x:
+                    if enemy_x < player_x:
+                        encounter_direction = 1
+                    else:
+                        encounter_direction = 3
                 else:
-                    encounter_direction = 3
+                    if enemy_y < player_y:
+                        encounter_direction = 2
+                    else:
+                        encounter_direction = 0
         #If we're not within sight, then we want to grab their path that they should be on
         #At the end we'll encounter the space and then move from there
         else:
