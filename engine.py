@@ -666,6 +666,7 @@ async def battle_round(raw_input):
                 await game_info.force_update(raw_input, update_info)
                 fname = "battle_" + str(raw_input.author.id) + ".txt"
                 os.remove(fname)
+                await resolve_screen(raw_input)
             else:
                 total_enemy_health -= total_player_attack
                 output_string = "The " + enemy_name_list[entity_char] + " attacked you for "+ str(total_enemy_attack) + " points of damage!"
