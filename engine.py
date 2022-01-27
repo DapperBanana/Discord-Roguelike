@@ -296,6 +296,14 @@ async def move_player(direction, player_name, raw_input):
                 in_battle = 1
         update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", new_x, new_y, "NULL", "NULL", in_battle]
         await game_info.force_update(raw_input, update_info)
+        #need to update the monster as well
+        fname = "info_" + str(raw_input.author.id) + ".txt"
+        info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+        for row in range(len(info_array)):
+            if row > 0 and info_array[row][8] == new_x and info_array[row][9] == new_y:
+                enemy_val = info_array[row][0]
+                update_info = [str(enemy_val), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                await game_info.force_update(raw_input, update_info)
         #So now we have updated the game info file, and moved the player ahead
         grid_array[player_y][player_x] = " "
         grid_array[new_y][new_x] = "&"
