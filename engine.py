@@ -162,7 +162,7 @@ async def engine(text_input, user_id_info):
                         #await text_input.channel.purge(limit=defaultval)
                         for x in range(iteration):
                             #I want to move the player using:
-                            if out_of_battle(text_input):
+                            if await out_of_battle(text_input):
                                 text = await move_player(mov_dir, str(text_input.author.id), text_input)
                                 enemy = await move_enemies(text_input)
                                 if enemy == "ebattle":
@@ -443,13 +443,16 @@ async def move_enemies(raw_input):
     for row in range(len(info_array)):
         if info_array[row][1] == "<":
             amount_of_enemies = int(info_array[row][0]) - 2
-            print(str("door is entity num " + int(info_array[row][0])))
-            print(str("there are " + amount_of_enemies + " enemies"))
+            str_to_print = "door is entity num " + str(info_array[row][0])
+            print(str_to_print)
+            str_to_print = "there are " + str(amount_of_enemies) + " enemies"
+            print(str_to_print)
     #Now that we have the amount of enemies, let's start cycling through them and updating everything.
     for enemy in range(amount_of_enemies):
         #First lets grab the units x and y
         enemy_type = info_array[enemy + 2][1]
-        print(str("entity num " + (enemy+2)))
+        str_to_print = "entity num " + str(enemy+2)
+        print(str_to_print)
         print(enemy_type)
         #check if the enemy is dead first
         if enemy_type == "X":
