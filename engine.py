@@ -8,6 +8,7 @@ import numpy
 import game_screen
 import game_info
 import random
+import discord
 from map_creator import generate_map
 from game_screen import resolve_screen
 from discord.ext import commands
@@ -709,6 +710,21 @@ async def out_of_battle(raw_input):
     if os.path.isfile(fname):
                 out_of_battle = False
     return out_of_battle
+
+
+async def music_state(raw_input):
+    music_state = "null"
+    #First lets see if the game is active
+    fname = "active_" + str(raw_input.author.id) + ".txt"
+    if os.path.isfile(fname):
+                music_state = "active"
+    fname = "battle_" + str(raw_input.author.id) + ".txt"
+    if os.path.isfile(fname):
+                music_state = "battle"
+    fname = "credits_" + str(raw_input.author.id) + ".txt"
+    if os.path.isfile(fname):
+                music_state = "credits"
+    return music_state
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                 __    _  _______  __   __  _______                 
