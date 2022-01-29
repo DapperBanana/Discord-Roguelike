@@ -111,7 +111,7 @@ async def check_user_id(user_id):
 #|_______||_|  |__||_______||___| |_|  |__||_______|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-async def engine(text_input, user_id_info):
+async def engine(text_input, user_id_info, client):
 
     is_active_user = user_id_info[0]
     is_user_alive = user_id_info[1]
@@ -132,7 +132,7 @@ async def engine(text_input, user_id_info):
             #Deal with start commands first
             for command in starting_command_list:
                 if command == str(text_input.content).lower():
-                    await starting_commands(text_input, user_id_info)
+                    await starting_commands(text_input, user_id_info, client)
                     return
 
             #After start commands we want to ask the basic questions
@@ -156,7 +156,7 @@ async def engine(text_input, user_id_info):
                     f = open("help_screen.txt", 'r')
                     await text_input.channel.send("```" + f.read() + "```")
                 #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
-                is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input)
+                is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input, client)
                 if is_command:
                     if is_movement:
                         #Haven't decided whether or not I want the player to have a log of their moves
@@ -167,9 +167,9 @@ async def engine(text_input, user_id_info):
                                 text = await move_player(mov_dir, str(text_input.author.id), text_input)
                                 enemy = await move_enemies(text_input)
                                 if enemy == "ebattle":
-                                    await start_battle(enemy, text_input)
+                                    await start_battle(enemy, text_input, client)
                                 elif text == "pbattle":
-                                    await start_battle(text, text_input)
+                                    await start_battle(text, text_input, client)
                                 else:
                                     await resolve_screen(text_input)
                                     if text != "null":
@@ -184,14 +184,14 @@ async def engine(text_input, user_id_info):
                     if str(text_input.content).lower() == battle_command:
                         is_battle_command = True
                 if is_battle_command:
-                    await battle_round(text_input)
+                    await battle_round(text_input, client)
                 else:
                     await text_input.channel.send("That is not a recognized command, " + username + ". Would you like some *help*, to *pause*, or even *end mission*?")
         else:
             if str(text_input.content).lower() == "next":
-                await game_screen.print_credits(text_input, False)
+                await game_screen.print_credits(text_input, False, client)
             elif str(text_input.content).lower() == "skip":
-                await game_screen.print_credits(text_input, True)
+                await game_screen.print_credits(text_input, True, client)
             
         return
 
@@ -205,7 +205,7 @@ async def engine(text_input, user_id_info):
 #|_______|  |___|  |__| |__||___|  |_|  |___|  |___| |_|  |__||_______||_____| |_______||_______||_|   |_||_|   |_||__| |__||_|  |__||______| |_______|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-async def starting_commands(text_input, user_id_info):
+async def starting_commands(text_input, user_id_info, client):
 
     is_active_user = user_id_info[0]
     is_user_alive = user_id_info[1]
@@ -230,6 +230,10 @@ async def starting_commands(text_input, user_id_info):
         x = [1]
         numpy.savetxt(credits_name, x)
         await game_screen.print_credits(text_input, False)
+        voice_channel = discord.utils.get(text_input.guild.voice_channels, name="The Catacombs")
+        await voice_channel.connect()
+        voice = discord.utils.get(client.voice_clients, guild=text_input.guild)
+        voice.play(discord.FFmpegPCMAudio("intro.mp3"))
 
     elif formatted_text == "continue":
     #continue
@@ -339,7 +343,7 @@ async def move_player(direction, player_name, raw_input):
 #|   | | | |   ||   |    |       |  |   |    |   |    |   _   ||   |  | | _____| ||   |___ |   |  | |
 #|___| |_|  |__||___|    |_______|  |___|    |___|    |__| |__||___|  |_||_______||_______||___|  |_|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-async def input_parse(raw_input):
+async def input_parse(raw_input, client):
     #These are the return values
     input_is_command = 0 #0 for no, 1 for yes
     input_is_movement = 0 #0 for no, 1 for yes
@@ -363,6 +367,9 @@ async def input_parse(raw_input):
                 if os.path.exists(file_name):
                     os.rename(file_name, new_name)
                     message_to_send =  "Campaign has been paused! Until next time!"
+                    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                    voice.stop()
+                    voice.disconnect()
 
             elif formatted_input == "end mission":
                 #clear all old messages
@@ -374,6 +381,9 @@ async def input_parse(raw_input):
                     os.remove(game_file)
                     os.remove(game_info_file)
                     message_to_send = "Campaign has ended! Safe travels"
+                voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                voice.stop()
+                voice.disconnect()
             elif formatted_input == "enter":
                 await resolve_screen(raw_input)
                 message_to_send = "You have entered the mighty catacombs of Mount Parthil. Good luck Adventurer!"
@@ -607,7 +617,7 @@ async def encounter_space(direction, entity_x, entity_y, raw_input):
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-async def start_battle(initiate, raw_input):
+async def start_battle(initiate, raw_input, client):
     #I'll have to use the raw input to get the x and y and of the battle through the info file
     if initiate == "pbattle":
         await raw_input.channel.send("player initiated battle")
@@ -616,6 +626,9 @@ async def start_battle(initiate, raw_input):
     fname = "battle_" + str(raw_input.author.id) + ".txt"
     x = [1]
     numpy.savetxt(fname, x)
+    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+    voice.stop()
+    voice.play(discord.FFmpegPCMAudio("battle.mp3"))
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  _______  _______  _______  ___      _______    ______    _______  __   __  __    _  ______  
@@ -637,7 +650,7 @@ enemy_name_list = {
     "W" : "9",
     "!" : "9"
 }
-async def battle_round(raw_input):
+async def battle_round(raw_input, client):
     #This is where we'll reopen the battle file and continue
     for battle_command in battle_commands:
         if str(raw_input.content).lower() == battle_command:
@@ -667,6 +680,9 @@ async def battle_round(raw_input):
                 await game_info.force_update(raw_input, update_info)
                 fname = "battle_" + str(raw_input.author.id) + ".txt"
                 os.remove(fname)
+                voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                voice.stop()
+                voice.play(discord.FFmpegPCMAudio("dungeon.mp3"))
                 await resolve_screen(raw_input)
             else:
                 total_enemy_health -= total_player_attack
@@ -681,8 +697,12 @@ async def battle_round(raw_input):
                     fname = "active_" + str(raw_input.author.id) + ".txt"
                     os.remove(fname)
                     await raw_input.channel.purge(limit=defaultval)
+                    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                    voice.stop()
+                    voice.disconnect()
                     await raw_input.channel.send("You have died in the catacombs; Better luck next time!")
                     await raw_input.channel.send("Would you like to start a *new game*?")
+
                 else:
                     if total_player_health <= int(info_array[0][3]):
                         new_player_health = total_player_health
@@ -710,21 +730,6 @@ async def out_of_battle(raw_input):
     if os.path.isfile(fname):
                 out_of_battle = False
     return out_of_battle
-
-
-async def music_state(raw_input):
-    music_state = "null"
-    #First lets see if the game is active
-    fname = "active_" + str(raw_input.author.id) + ".txt"
-    if os.path.isfile(fname):
-                music_state = "active"
-    fname = "battle_" + str(raw_input.author.id) + ".txt"
-    if os.path.isfile(fname):
-                music_state = "battle"
-    fname = "credits_" + str(raw_input.author.id) + ".txt"
-    if os.path.isfile(fname):
-                music_state = "credits"
-    return music_state
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                 __    _  _______  __   __  _______                 
