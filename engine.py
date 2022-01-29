@@ -229,7 +229,7 @@ async def starting_commands(text_input, user_id_info, client):
         credits_name = "credits_" + str(text_input.author.id) + ".txt"
         x = [1]
         numpy.savetxt(credits_name, x)
-        await game_screen.print_credits(text_input, False)
+        await game_screen.print_credits(text_input, False, client)
         voice_channel = discord.utils.get(text_input.guild.voice_channels, name="The Catacombs")
         await voice_channel.connect()
         voice = discord.utils.get(client.voice_clients, guild=text_input.guild)
