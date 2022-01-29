@@ -6,7 +6,6 @@ import time
 import engine
 from engine import check_user_id
 from engine import engine
-from engine import music_state
 from discord.ext import commands
 from discord import FFmpegPCMAudio, PCMVolumeTransformer
 
