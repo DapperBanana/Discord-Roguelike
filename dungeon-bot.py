@@ -6,6 +6,7 @@ import time
 import engine
 from engine import check_user_id
 from engine import engine
+from engine import music_state
 from discord.ext import commands
 
 client = commands.Bot(command_prefix = '.')
@@ -21,7 +22,7 @@ async def on_message(input):
         if str(input.channel) == "bot-playground":
             data_list = await check_user_id(input.author.id)
             await engine(input, data_list)
-    game_state = engine.music_state(input)
+    game_state = await music_state(input)
     if game_state == "active":
         voice_channel = discord.utils.get(input.guild.voice_channels, name="The Catacombs")
         await voice_channel.connect()
