@@ -150,5 +150,8 @@ async def print_credits(raw_data, skip_bool, client):
         await raw_data.channel.send("Now brave knight you must *enter* the catacombs!")
         #Lastly we need to delete the credits page
         os.remove(file_name)
+        voice = discord.utils.get(client.voice_clients, guild=raw_data.guild)
+        voice.stop()
+        voice.play(discord.FFmpegPCMAudio("dungeon.mp3"))
     
     return
