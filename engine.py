@@ -369,7 +369,7 @@ async def input_parse(raw_input, client):
                     message_to_send =  "Campaign has been paused! Until next time!"
                     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
                     voice.stop()
-                    voice.disconnect()
+                    await voice.disconnect()
 
             elif formatted_input == "end mission":
                 #clear all old messages
@@ -383,7 +383,7 @@ async def input_parse(raw_input, client):
                     message_to_send = "Campaign has ended! Safe travels"
                 voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
                 voice.stop()
-                voice.disconnect()
+                await voice.disconnect()
             elif formatted_input == "enter":
                 await resolve_screen(raw_input)
                 message_to_send = "You have entered the mighty catacombs of Mount Parthil. Good luck Adventurer!"
@@ -699,7 +699,7 @@ async def battle_round(raw_input, client):
                     await raw_input.channel.purge(limit=defaultval)
                     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
                     voice.stop()
-                    voice.disconnect()
+                    await voice.disconnect()
                     await raw_input.channel.send("You have died in the catacombs; Better luck next time!")
                     await raw_input.channel.send("Would you like to start a *new game*?")
 
