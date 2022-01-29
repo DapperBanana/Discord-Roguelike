@@ -22,17 +22,7 @@ async def on_message(input):
     if str(input.author.id) != "920859015146246184":
         if str(input.channel) == "bot-playground":
             data_list = await check_user_id(input.author.id)
-            await engine(input, data_list)
-    game_state = await music_state(input)
-    if game_state == "active":
-        voice_channel = discord.utils.get(input.guild.voice_channels, name="The Catacombs")
-        await voice_channel.connect()
-        voice = discord.utils.get(client.voice_clients, guild=input.guild)
-        voice.play(discord.FFmpegPCMAudio("dungeon.mp3"))
-    if game_state == "null":
-        voice = discord.utils.get(client.voice_clients, guild=input.guild)
-        if voice.is_connected():
-            await voice.disconnect()
+            await engine(input, data_list, client)
 
 @client.event
 async def on_ready():

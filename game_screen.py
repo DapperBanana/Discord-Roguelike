@@ -5,6 +5,7 @@ import glob
 import time
 import random
 import numpy
+import discord
 from discord.ext import commands
 
 #__________.__                                    .__               
@@ -114,7 +115,7 @@ async def resolve_screen(raw_input):
     return   
     
 
-async def print_credits(raw_data, skip_bool):
+async def print_credits(raw_data, skip_bool, client):
     total_credits = 10
     file_name = "credits_" + str(raw_data.author.id) + ".txt"
     tmp_screen_val = numpy.loadtxt(file_name).reshape(1)
@@ -135,6 +136,10 @@ async def print_credits(raw_data, skip_bool):
             await raw_data.channel.send("Now brave knight you must *enter* the catacombs!")
             #We want to delete the credits page
             os.remove(file_name)
+            voice = discord.utils.get(client.voice_clients, guild=raw_data.guild)
+            voice.stop()
+            voice.play(discord.FFmpegPCMAudio("dungeon.mp3"))
+
 
     else:
         for x in range(screen_val, total_credits+1):
