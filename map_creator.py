@@ -10,7 +10,7 @@ from discord.ext import commands
 
 async def generate_map(raw_data):
     #Definitions
-    file_name = "./player_files/active" + str(raw_data.author.id) + ".txt"
+    file_name = "./player_files/active_" + str(raw_data.author.id) + ".txt"
     walls = "#"
     floor = " "
     void = "-"
