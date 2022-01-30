@@ -27,7 +27,7 @@ defaultval = 10000
 monster_gallery = [
                 "m",
                 "b",
-                "s",
+                "f",
                 "p"]
 battle_commands = ["slash",
                 "cast",
@@ -68,30 +68,30 @@ movement_list = ["n",
 
 async def check_user_id(user_id):
     #Variable Setup
-    temp = "active_" + str(user_id) + ".txt"
+    temp = "./player_files/active_" + str(user_id) + ".txt"
     active = "na"
     exists = "na"
     active_file = False
     active_credits = False
     active_battle = False
     #Check for a an active file recorded for this person
-    for name in glob.glob('active_*.txt'):
+    for name in glob.glob('./player_files/active_*.txt'):
         #If any name exists that means there is an active file
         active_file = True
         if name == temp:
             #This means that the person typing is the active user, and a file exists for them
             active = True
             exists = True
-            if os.path.isfile('./credits_' + str(user_id) + ".txt"):
+            if os.path.isfile('./player_files/credits_' + str(user_id) + ".txt"):
                 active_credits = True
-            if os.path.isfile('./battle_' + str(user_id) + ".txt"):
+            if os.path.isfile('./player_files/battle_' + str(user_id) + ".txt"):
                 active_battle = True
             ret_list = [active, exists, active_file, active_credits, active_battle]
             return ret_list
             #There shouldn't be any more active files than 1, but just in case we're nesting a return into here (That would be a bug for future me to figure out))
     
     active = False
-    x = str(user_id) + ".txt"
+    x = "./player_files/" + str(user_id) + ".txt"
     #So now we know that this user is not the one actively playing we need to determine whether any files exist under their name
     if os.path.isfile(x):
         exists = True
@@ -127,7 +127,7 @@ async def engine(text_input, user_id_info, client):
             return
         else:
             if str(text_input.content).lower() == "help":
-                f = open("help_screen.txt", 'r')
+                f = open("./game_screens/help_screen.txt", 'r')
                 await text_input.channel.send("```" + f.read() + "```")
             #Deal with start commands first
             for command in starting_command_list:
@@ -153,7 +153,7 @@ async def engine(text_input, user_id_info, client):
         if not is_credits:
             if not is_battle:
                 if str(text_input.content).lower() == "help":
-                    f = open("help_screen.txt", 'r')
+                    f = open("./game_screens/help_screen.txt", 'r')
                     await text_input.channel.send("```" + f.read() + "```")
                 #instead of looking through commands here, we're going to use an input parser, find is_command, is_movement, iteration, movement direction
                 is_command, is_movement, iteration, mov_dir, command = await input_parse(text_input, client)
@@ -226,21 +226,21 @@ async def starting_commands(text_input, user_id_info, client):
         await text_input.channel.send("New campaign started for: " + str(username))
 
         #Create the Credits!
-        credits_name = "credits_" + str(text_input.author.id) + ".txt"
+        credits_name = "./player_files/credits_" + str(text_input.author.id) + ".txt"
         x = [1]
         numpy.savetxt(credits_name, x)
         await game_screen.print_credits(text_input, False, client)
         voice_channel = discord.utils.get(text_input.guild.voice_channels, name="The Catacombs")
         await voice_channel.connect()
         voice = discord.utils.get(client.voice_clients, guild=text_input.guild)
-        voice.play(discord.FFmpegPCMAudio("intro.mp3"))
+        voice.play(discord.FFmpegPCMAudio("./music/intro.mp3"))
 
     elif formatted_text == "continue":
     #continue
 
         #Change the old file to active status
-        new_name = "active_" + str(text_input.author.id) + ".txt"
-        file_name = str(text_input.author.id) + ".txt"
+        new_name = "./player_files/active_" + str(text_input.author.id) + ".txt"
+        file_name = "./player_files/" + str(text_input.author.id) + ".txt"
         if os.path.exists(file_name):
             os.rename(file_name, new_name)
             await text_input.channel.send("Campaign has been set to active!")
@@ -251,7 +251,7 @@ async def starting_commands(text_input, user_id_info, client):
     elif formatted_text == "test":
         await text_input.channel.send("test is working")
     elif formatted_text == "login":
-        file_name = str(text_input.author.id) + ".txt"
+        file_name = "./player_files/" + str(text_input.author.id) + ".txt"
         if os.path.exists(file_name):
             await text_input.channel.send("You have a paused game, would you like to *continue*?")
         else:
@@ -270,7 +270,7 @@ async def starting_commands(text_input, user_id_info, client):
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 async def move_player(direction, player_name, raw_input):
     #First find the player on the map
-    with open("active_" + player_name + ".txt") as f:
+    with open("./player_files/active_" + player_name + ".txt") as f:
         input_grid = f.readlines()
     input_grid = [row.rstrip('\n') for row in input_grid]
     player_x = 0
@@ -305,7 +305,7 @@ async def move_player(direction, player_name, raw_input):
         await game_info.force_update(raw_input, update_info)
         print("----------")
         #need to update the monster as well
-        fname = "info_" + str(raw_input.author.id) + ".txt"
+        fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
         for row in range(len(info_array)):
             str_to_print = "player_x : " + str(new_x) + " | player_y : " + str(new_y)
@@ -325,7 +325,7 @@ async def move_player(direction, player_name, raw_input):
         grid_array[player_y][player_x] = " "
         grid_array[new_y][new_x] = "&"
         #save it to the active player file
-        file_name = "active_" + str(player_name) + ".txt"
+        file_name = "./player_files/active_" + str(player_name) + ".txt"
         numpy.savetxt(file_name, grid_array, fmt='%s')
         if in_battle:
             val = "pbattle"
@@ -362,8 +362,8 @@ async def input_parse(raw_input, client):
                 #clear all old messages
                 await raw_input.channel.purge(limit=defaultval)
                 #Change the current file to non active status
-                file_name = "active_" + str(raw_input.author.id) + ".txt"
-                new_name = str(raw_input.author.id) + ".txt"
+                file_name = "./player_files/active_" + str(raw_input.author.id) + ".txt"
+                new_name = "./player_files/" + str(raw_input.author.id) + ".txt"
                 if os.path.exists(file_name):
                     os.rename(file_name, new_name)
                     message_to_send =  "Campaign has been paused! Until next time!"
@@ -375,8 +375,8 @@ async def input_parse(raw_input, client):
                 #clear all old messages
                 await raw_input.channel.purge(limit=defaultval)
                 #Delete the file
-                game_file = "active_" + str(raw_input.author.id) + ".txt"
-                game_info_file = "info_" + str(raw_input.author.id) + ".txt"
+                game_file = "./player_files/active_" + str(raw_input.author.id) + ".txt"
+                game_info_file = "./player_files/info_" + str(raw_input.author.id) + ".txt"
                 if os.path.exists(game_file):
                     os.remove(game_file)
                     os.remove(game_info_file)
@@ -387,9 +387,8 @@ async def input_parse(raw_input, client):
             elif formatted_input == "enter":
                 await resolve_screen(raw_input)
                 message_to_send = "You have entered the mighty catacombs of Mount Parthil. Good luck Adventurer!"
-            elif formatted_input == "print":
-                f = open("print-me.txt", 'r')
-                await raw_input.channel.send("```" + f.read() + "```") 
+            elif formatted_input == "wait":
+                await resolve_screen(raw_input)
             elif formatted_input == "login":
                 message_to_send = "You are currently playing!"
     #After we've iterated through the commands list let's now see if we're dealing with a direction/movement command
@@ -440,19 +439,19 @@ async def input_parse(raw_input, client):
 enemy_sight = {
     "m" : 2,
     "b" : 3,
-    "s" : 2,
-    "p" : 3,
+    "f" : 2,
+    "s" : 3,
     "w" : 9,
     "S" : 9,
     "I" : 9,
     "W" : 9,
     "!" : 9  
 }
-entity_list = ["m","b","s","p","w","S","I","W","!","<","?","#"]
+entity_list = ["m","b","f","s","w","S","I","W","!","<","?","#"]
 
 async def move_enemies(raw_input):
     #First things first we want to load the map into an array
-    with open("active_" + str(raw_input.author.id) + ".txt") as f:
+    with open("./player_files/active_" + str(raw_input.author.id) + ".txt") as f:
         input_grid = f.readlines()
         input_grid = [row.rstrip('\n') for row in input_grid]
         room_width = len(input_grid)
@@ -464,7 +463,7 @@ async def move_enemies(raw_input):
             for x in range(0,len(input_grid[0])-1):
                 if x % 2 == 0:
                     grid_array[y][int(x/2)] = input_grid[y][x]
-    fname = "info_" + str(raw_input.author.id) + ".txt"
+    fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
     info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
     amount_of_enemies = 0
     player_x = int(info_array[0][9])
@@ -550,7 +549,7 @@ async def move_enemies(raw_input):
             update_info = [str(enemy + 2), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", new_x, new_y, "NULL", "NULL", in_battle]
             await game_info.force_update(raw_input, update_info)
             grid_array[enemy_y][enemy_x] = " "
-            file_name = "active_" + str(raw_input.author.id) + ".txt"
+            file_name = "./player_files/active_" + str(raw_input.author.id) + ".txt"
             numpy.savetxt(file_name, grid_array, fmt='%s')
             return_val = "ebattle"
         elif hit_entity:
@@ -561,7 +560,7 @@ async def move_enemies(raw_input):
             await game_info.force_update(raw_input, update_info)
             grid_array[enemy_y][enemy_x] = " "
             grid_array[new_y][new_x] = enemy_type
-            file_name = "active_" + str(raw_input.author.id) + ".txt"
+            file_name = "./player_files/active_" + str(raw_input.author.id) + ".txt"
             numpy.savetxt(file_name, grid_array, fmt='%s')
     
     return return_val
@@ -580,7 +579,7 @@ async def move_enemies(raw_input):
 
 async def encounter_space(direction, entity_x, entity_y, raw_input):
     #First things first we want to load the map into an array
-    with open("active_" + str(raw_input.author.id) + ".txt") as f:
+    with open("./player_files/active_" + str(raw_input.author.id) + ".txt") as f:
         input_grid = f.readlines()
         input_grid = [row.rstrip('\n') for row in input_grid]
         room_width = len(input_grid)
@@ -623,12 +622,12 @@ async def start_battle(initiate, raw_input, client):
         await raw_input.channel.send("player initiated battle")
     elif initiate == "ebattle":
         await raw_input.channel.send("enemy initiated battle")
-    fname = "battle_" + str(raw_input.author.id) + ".txt"
+    fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
     x = [1]
     numpy.savetxt(fname, x)
     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
     voice.stop()
-    voice.play(discord.FFmpegPCMAudio("battle.mp3"))
+    voice.play(discord.FFmpegPCMAudio("./music/battle.mp3"))
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  _______  _______  _______  ___      _______    ______    _______  __   __  __    _  ______  
@@ -642,8 +641,8 @@ async def start_battle(initiate, raw_input, client):
 enemy_name_list = {
     "m" : "nasty mouse",
     "b" : "giant bat",
-    "s" : "slithering snake",
-    "p" : "terrible spider",
+    "f" : "poisonous frog",
+    "s" : "terrible spider",
     "w" : "9",
     "S" : "9",
     "I" : "9",
@@ -655,7 +654,7 @@ async def battle_round(raw_input, client):
     for battle_command in battle_commands:
         if str(raw_input.content).lower() == battle_command:
             #lets first find the enemy the player has encountered
-            fname = "info_" + str(raw_input.author.id) + ".txt"
+            fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
             entity_val = 0
             info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
             for row in range(len(info_array)):
@@ -678,11 +677,11 @@ async def battle_round(raw_input, client):
                 await game_info.force_update(raw_input, update_info)
                 update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                 await game_info.force_update(raw_input, update_info)
-                fname = "battle_" + str(raw_input.author.id) + ".txt"
+                fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
                 os.remove(fname)
                 voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
                 voice.stop()
-                voice.play(discord.FFmpegPCMAudio("dungeon.mp3"))
+                voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
                 await resolve_screen(raw_input)
             else:
                 total_enemy_health -= total_player_attack
@@ -690,16 +689,18 @@ async def battle_round(raw_input, client):
                 await raw_input.channel.send(output_string)
                 total_player_health -= total_enemy_attack
                 if total_player_health <= 0:
-                    fname = "battle_" + str(raw_input.author.id) + ".txt"
+                    fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
                     os.remove(fname)
-                    fname = "info_" + str(raw_input.author.id) + ".txt"
+                    fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
                     os.remove(fname)
-                    fname = "active_" + str(raw_input.author.id) + ".txt"
+                    fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
                     os.remove(fname)
                     await raw_input.channel.purge(limit=defaultval)
                     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
                     voice.stop()
                     await voice.disconnect()
+                    f = open("./game_screens/death.txt", 'r')
+                    await raw_input.channel.send("```" + f.read() + "```") 
                     await raw_input.channel.send("You have died in the catacombs; Better luck next time!")
                     await raw_input.channel.send("Would you like to start a *new game*?")
 
@@ -726,7 +727,7 @@ async def battle_round(raw_input, client):
 async def out_of_battle(raw_input):
     #This is where we'll reopen the battle file and continue
     out_of_battle = True
-    fname = "battle_" + str(raw_input.author.id) + ".txt"
+    fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
     if os.path.isfile(fname):
                 out_of_battle = False
     return out_of_battle
