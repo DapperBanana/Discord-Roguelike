@@ -10,7 +10,7 @@ from discord.ext import commands
 
 async def generate_map(raw_data):
     #Definitions
-    file_name = "active_" + str(raw_data.author.id) + ".txt"
+    file_name = "./player_files/active" + str(raw_data.author.id) + ".txt"
     walls = "#"
     floor = " "
     void = "-"
@@ -81,28 +81,28 @@ async def generate_map(raw_data):
     #unless I throw the level inside a stats page... Could do that... I'll think about it.
     #First anyways I'm just gonna spawn some basic enemies into a level and disregard difficulty scale according to level
     enemy_dict = {
-        "m" : ["m", '1', '2', '0', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
-        "b" : ["b", '2', '2', '0', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
-        "s" : ["s", '5', '112', '1', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
-        "p" : ["p", '2', '2', '1', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
-        "w" : ["w", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # Need
-        "S" : ["S", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # to
-        "I" : ["I", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # work
-        "W" : ["W", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # on
-        "!" : ["!", '9', '9', '9', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # these
+        "m" : ["m", '1', '6', '0', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
+        "b" : ["b", '2', '5', '0', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
+        "f" : ["f", '5', '15', '1', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
+        "s" : ["s", '2', '5', '0', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
+        "w" : ["w", '6', '15', '2', '3', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # Need
+        "S" : ["S", '10', '45', '5', '5', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # to
+        "I" : ["I", '13', '55', '7', '7', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # work
+        "W" : ["W", '17', '65', '10', '9', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # on
+        "!" : ["!", '26', '100', '20', '10', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # these
         "?" : ["?", '0', '0', '0', '0', '2', '0', '0', '-1', '-1', '-1', '0', '0'],
         "<" : ["<", '0', '0', '0', '0', '1', '0', '0', '-1', '-1', '-1', '0', '0']
     }
     enemy_list = [
         "m",
         "b",
-        "s",
-        "p"
+        "f",
+        "s"
     ]
     level = 1
     amount_of_enemies = level * random.randint(1,5)
     amount_of_items = (level * random.randint(1,2)) + 1 #Items spawns are going to be based on the level you're on, and there'll only be one door per level
-    player_info = ["&", "3", "10", "0", level, "0", "1", "1", player_x, player_y, "-1", "-1", "0"]
+    player_info = ["&", "3", "10", "0", level, "0", "1", "1", player_x, player_y, "0", "-1", "0"]
     info_array = [[void for i in range(len(player_info) + 1)] for j in range(amount_of_enemies + amount_of_items + 1)]
     for entity_val in range(amount_of_enemies + amount_of_items + 1):
         info_array[entity_val][0] = str(entity_val + 1)

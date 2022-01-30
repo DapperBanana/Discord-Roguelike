@@ -1,0 +1,30 @@
+
+
+   ___                             
+  / _ \__ _____  ___ ____ ___  ___ 
+ / // / // / _ \/ _ `/ -_) _ \/ _ \
+/____/\_,_/_//_/\_, /\__/\___/_//_/
+               /___/              
+
+    The Rogue-like Discord Game 
+
+
+
+
+===================================
+
+      Design & Programming by:
+         Austin L. Howard
+
+	        Art by:
+	      Harry Mason
+	     Shanaka Dias
+	    Andreas Freise
+	          MRF
+	          SSt
+	    Steven Maddison
+	     Joan G. Stark
+	    Max Strandberg
+     Hayley Jane Wakenshaw
+        Austin L. Howard
+	

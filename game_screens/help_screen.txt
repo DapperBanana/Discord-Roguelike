@@ -35,10 +35,10 @@
 #     as an enemy in order to attack       #
 #                                          #
 #   Map Legend:                            #
-#     & : Player  m : mouse     w : wolf   #
-#     # : Wall    b : bats      I : imp    #
-#     - : Void    s : snake     W : wizard #
-#     ? : item    p : spider               #
-#     < : door    S : skeleton  ! : Boss   #
+#   & : Player  m : mice      w : wolves   #
+#   # : Wall    b : bats      I : imps     #
+#   - : Void    f : frogs     W : wizards  #
+#   ? : item    p : spiders                #
+#   < : door    S : skeletons ! : Boss     #
 #                                          #
 ############################################

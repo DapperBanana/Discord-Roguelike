@@ -18,7 +18,7 @@ from discord.ext import commands
 async def resolve_screen(raw_input):
     file_name = raw_input.author.id
     #First find the player on the map
-    with open("active_" + str(file_name) + ".txt") as f:
+    with open("./player_files/active_" + str(file_name) + ".txt") as f:
         input_grid = f.readlines()
     input_grid = [row.rstrip('\n') for row in input_grid]
     player_x = 0
@@ -76,6 +76,9 @@ async def resolve_screen(raw_input):
         for x in range(player_view_x*2+1):
             viewable_grid[y][x] = grid_array[y + viewable_grid_y_start][x + viewable_grid_x_start]
 
+
+    #Let's find unique characters in viewable grid
+
     #Now that we have the viewable area, we want to go and place everything onto the actual game screen
     level_val = 1
     blank_space = " "
@@ -83,18 +86,38 @@ async def resolve_screen(raw_input):
     game_screen_height = 17
     #Next let's set up the complete game screen
     game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
-    stats_grid = [['     Stats'],
-                ['     -----'],
-                ['Health :'],
-                ['Mana   :'],
-                ['Armour :'],
-                ['Weapon :'],
-                ['Attack :'],
-                ['Evade  :'],
-                [' ']]
     level_strings = [["M","o","u","n","t"," ","P","a",'r','t','h','i','l'],
                     [' ',' ','C','a','t','a','c','o','m','b','s'],
                     [' ',' ',' ','L','e','v','e','l',' ',level_val]]
+    #lets get the stats strings ready
+    fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+    info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+    character_level = int(info_array[0][5])
+    max_heath = 10
+    max_mana = 0
+    max_armor = 1
+    max_weapon = 1
+    max_attack = 3
+    for x in range(character_level):
+        max_heath += ((character_level-1)*5) + (character_level*5) + (character_level*2)
+        max_mana += (character_level*5) + (character_level*2)
+        max_armor += (character_level*2)
+        max_weapon = max_armor
+        max_attack += ((character_level-1)*5) + (character_level*5)
+    health = str(info_array[0][3]) + "/" + str(max_heath)
+    mana = str(info_array[0][4]) + "/" + str(max_mana)
+    armour = str(info_array[0][7]) + "/" + str(max_armor)
+    weapon = str(info_array[0][8]) + "/" + str(max_weapon)
+    attack = str(info_array[0][2]) + "/" + str(max_attack)
+    evade =  str(info_array[0][11])+ "%"
+    stats_grid = [['     Stats',' '],
+                ['     -----',' '],
+                ['Health :',health],
+                ['Attack :',attack],
+                ['Mana   :',mana],
+                ['Dodge  :',evade],
+                ['Armour :',armour],
+                ['Weapon :',weapon]]
     for y in range(len(game_screen)):
         for x in range(len(game_screen[y])):
             #First lets print the stats on the side and then figure the if statement out for the viewable screen
@@ -108,8 +131,8 @@ async def resolve_screen(raw_input):
             elif y >= 2 and y <= 12 and x >= 1 and x <= 11:
                 game_screen[y][x] = viewable_grid[y-2][x-1]
 
-    numpy.savetxt("current_view.txt", game_screen, fmt='%s')
-    f = open("current_view.txt", 'r')
+    numpy.savetxt("./player_files/current_view.txt", game_screen, fmt='%s')
+    f = open("./player_files/current_view.txt", 'r')
     await raw_input.channel.send("```" + f.read() + "```") 
 
     return   
@@ -117,19 +140,19 @@ async def resolve_screen(raw_input):
 
 async def print_credits(raw_data, skip_bool, client):
     total_credits = 10
-    file_name = "credits_" + str(raw_data.author.id) + ".txt"
+    file_name = "./player_files/credits_" + str(raw_data.author.id) + ".txt"
     tmp_screen_val = numpy.loadtxt(file_name).reshape(1)
     screen_val = int(tmp_screen_val[0])
     if not skip_bool:
         if screen_val < 10:
-            credits_screen = "start_screen_" + str(screen_val) + ".txt"
+            credits_screen = "./intro/start_screen_" + str(screen_val) + ".txt"
             f = open(credits_screen, 'r')
             await raw_data.channel.send("```" + f.read() + "```")
             await raw_data.channel.send("Page " + str(screen_val) + "/10      please go to the *next* page or *skip*")
             save_val = [screen_val + 1]
             numpy.savetxt(file_name, save_val)
         else:
-            credits_screen = "start_screen_" + str(screen_val) + ".txt"
+            credits_screen = "./intro/start_screen_" + str(screen_val) + ".txt"
             f = open(credits_screen, 'r')
             await raw_data.channel.send("```" + f.read() + "```")
             await raw_data.channel.send("Page " + str(screen_val) + "/10")
@@ -138,12 +161,12 @@ async def print_credits(raw_data, skip_bool, client):
             os.remove(file_name)
             voice = discord.utils.get(client.voice_clients, guild=raw_data.guild)
             voice.stop()
-            voice.play(discord.FFmpegPCMAudio("dungeon.mp3"))
+            voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
 
 
     else:
         for x in range(screen_val, total_credits+1):
-            credits_screen = "start_screen_" + str(x) + ".txt"
+            credits_screen = "./intro/start_screen_" + str(x) + ".txt"
             f = open(credits_screen, 'r')
             await raw_data.channel.send("```" + f.read() + "```")
             await raw_data.channel.send("Page " + str(x) + "/10")
@@ -152,6 +175,6 @@ async def print_credits(raw_data, skip_bool, client):
         os.remove(file_name)
         voice = discord.utils.get(client.voice_clients, guild=raw_data.guild)
         voice.stop()
-        voice.play(discord.FFmpegPCMAudio("dungeon.mp3"))
+        voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
     
     return
