@@ -747,6 +747,9 @@ async def battle_round(raw_input, client):
                         new_enemy_health = int(info_array[entity_val-1][3])
                         new_enemy_armor = total_enemy_health - int(info_array[entity_val-1][3])
                     #Now to save the health
+                    print(total_enemy_health)
+                    print(new_enemy_health)
+                    print(new_enemy_armor)
                     update_info = ["1", "NULL", "NULL", new_player_health, "NULL", "NULL", "NULL", new_player_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
                     update_info = [str(entity_val + 1), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
