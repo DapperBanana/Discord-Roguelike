@@ -31,7 +31,9 @@ monster_gallery = [
                 "p"]
 battle_commands = ["slash",
                 "cast",
-                "kill"]
+                "kill",
+                "actions",
+                "fireball"]
 active_command_list = ["logout",
                 "login",
                 "end mission",
@@ -244,6 +246,10 @@ async def starting_commands(text_input, user_id_info, client):
         if os.path.exists(file_name):
             os.rename(file_name, new_name)
             await text_input.channel.send("Campaign has been set to active!")
+            voice_channel = discord.utils.get(text_input.guild.voice_channels, name="The Catacombs")
+            await voice_channel.connect()
+            voice = discord.utils.get(client.voice_clients, guild=text_input.guild)
+            voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
             await text_input.channel.send("When you are ready feel free to *enter* the catacombs!")
         else:
             await text_input.channel.send("No such campaign exists, do you want to make a *new game*?")
@@ -614,7 +620,17 @@ async def encounter_space(direction, entity_x, entity_y, raw_input):
 # _____| |  |   |  |   _   ||   |  | |  |   |    | |_|   ||   _   |  |   |    |   |  |       ||   |___ 
 #|_______|  |___|  |__| |__||___|  |_|  |___|    |_______||__| |__|  |___|    |___|  |_______||_______|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+enemies = {
+    "m" : "mouse",
+    "b" : "bat",
+    "f" : "frog",
+    "s" : "spider",
+    "w" : "wolf",
+    "S" : "skeleton",
+    "I" : "imp",
+    "W" : "wizard",
+    "!" : "boss"
+}
 
 async def start_battle(initiate, raw_input, client):
     #I'll have to use the raw input to get the x and y and of the battle through the info file
@@ -625,9 +641,21 @@ async def start_battle(initiate, raw_input, client):
     fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
     x = [1]
     numpy.savetxt(fname, x)
+    #find the enemy character of what you're fighting
+    fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+    entity_val = 0
+    info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+    for row in range(len(info_array)):
+        if row > 0 and int(info_array[row][13]) == 1:
+            entity_val = int(info_array[row][0])
+    entity_char = str(info_array[entity_val-1][1])
+    fname = "./enemies/" + str(enemies[entity_char]) + ".txt"
+    f = open(fname, 'r')
+    await raw_input.channel.send("```" + f.read() + "```")
     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
     voice.stop()
     voice.play(discord.FFmpegPCMAudio("./music/battle.mp3"))
+    await raw_input.channel.send("Remember you can request a list of *actions* if you've forgotten your skills.")
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  _______  _______  _______  ___      _______    ______    _______  __   __  __    _  ______  
