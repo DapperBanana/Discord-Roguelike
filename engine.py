@@ -752,7 +752,7 @@ async def battle_round(raw_input, client):
                     print(new_enemy_armor)
                     update_info = ["1", "NULL", "NULL", new_player_health, "NULL", "NULL", "NULL", new_player_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
-                    update_info = [str(entity_val + 1), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    update_info = [str(entity_val), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
 
 async def out_of_battle(raw_input):
