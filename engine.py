@@ -300,33 +300,50 @@ async def move_player(direction, player_name, raw_input):
     encounter_char, new_x, new_y = await encounter_space(direction, player_x, player_y, raw_input)
     if encounter_char == "#":
         val = "There is a wall there!"
+    elif encounter_char == "?":
+        #First let's grab the character info that can mutate
+        fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+        info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+        #Weapons, Armor, Mana, and Health
+        player_weapon = int(info_array[0][8])
+        player_armor = int(info_array[0][7])
+        player_mana = int(info_array[0][4])
+        player_health = int(info_array[0][3])
+        percent_chance_of_upgrade = random.randint(0,19)
+        if percent_chance_of_upgrade >= 0 and percent_chance_of_upgrade <= 4:
+            player_weapon += 1
+        elif percent_chance_of_upgrade >= 5 and percent_chance_of_upgrade <= 9:
+            player_armor += 1
+        elif percent_chance_of_upgrade >= 10 and percent_chance_of_upgrade <= 14:
+            player_mana += 1
+        elif percent_chance_of_upgrade >= 15 and percent_chance_of_upgrade <= 17:
+            player_health += 1
+        update_info = ["1", "NULL", "NULL", player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, new_x, new_y, "NULL", "NULL", "NULL"]
+        await game_info.force_update(raw_input, update_info)
+        grid_array[player_y][player_x] = " "
+        grid_array[new_y][new_x] = "&"
+        #save it to the active player file
+        file_name = "./player_files/active_" + str(player_name) + ".txt"
+        numpy.savetxt(file_name, grid_array, fmt='%s')
+    elif encounter_char == "<":
+        print("door!")
+        #This is where we're going to have to delete the game active file, then call a new (or remade) map creation call that will generate upper levels of the catacombs
     else:
         in_battle = 0
         for monster in monster_gallery:
             if encounter_char == monster:
                 in_battle = 1
-        print("----------")
-        print("updating player")
         update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", new_x, new_y, "NULL", "NULL", in_battle]
         await game_info.force_update(raw_input, update_info)
-        print("----------")
         #need to update the monster as well
         fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
         for row in range(len(info_array)):
-            str_to_print = "player_x : " + str(new_x) + " | player_y : " + str(new_y)
-            print(str_to_print)
-            str_to_print = "entity_x : " + str(info_array[row][9]) + " | entity_y : " + str(info_array[row][10] )
-            print(str_to_print)
-            print(row)
             if row > 0:
                 if (int(info_array[row][9]) == new_x) and (int(info_array[row][10]) == new_y):
                     enemy_val = info_array[row][0]
-                    print("----------")
-                    print("updating player")
                     update_info = [str(enemy_val), "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                     await game_info.force_update(raw_input, update_info)
-                    print("----------")
         #So now we have updated the game info file, and moved the player ahead
         grid_array[player_y][player_x] = " "
         grid_array[new_y][new_x] = "&"
@@ -671,12 +688,13 @@ enemy_name_list = {
     "b" : "giant bat",
     "f" : "poisonous frog",
     "s" : "terrible spider",
-    "w" : "9",
-    "S" : "9",
-    "I" : "9",
-    "W" : "9",
-    "!" : "9"
+    "w" : "foreboding wolf",
+    "S" : "ghastly skeleton",
+    "I" : "fiery imp",
+    "W" : "acolyte wizard",
+    "!" : "Grand Sage Abaris"
 }
+magical_entities = ["f", "I", "W"]
 async def battle_round(raw_input, client):
     #This is where we'll reopen the battle file and continue
     for battle_command in battle_commands:
@@ -701,7 +719,20 @@ async def battle_round(raw_input, client):
                 await raw_input.channel.send(output_string)
                 #then update the info file
                 in_battle = 0
-                update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                #we first have to award the player health or strength, and possibly even mana depending on whether it's a magical creature
+                player_attack = int(info_array[0][2])
+                player_health = int(info_array[0][3])
+                player_mana = int(info_array[0][4])
+                percent_chance_of_upgrade = random.randint(0,9)
+                if percent_chance_of_upgrade == 1:
+                    player_attack += 2
+                elif percent_chance_of_upgrade == 2:
+                    player_health += 1
+                elif percent_chance_of_upgrade == 3:
+                    for mana_char in magical_entities:
+                        if entity_char == mana_char:
+                            player_mana += 1
+                update_info = ["1", "NULL", player_attack, player_health, player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                 await game_info.force_update(raw_input, update_info)
                 update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                 await game_info.force_update(raw_input, update_info)
@@ -747,9 +778,6 @@ async def battle_round(raw_input, client):
                         new_enemy_health = int(info_array[entity_val-1][3])
                         new_enemy_armor = total_enemy_health - int(info_array[entity_val-1][3])
                     #Now to save the health
-                    print(total_enemy_health)
-                    print(new_enemy_health)
-                    print(new_enemy_armor)
                     update_info = ["1", "NULL", "NULL", new_player_health, "NULL", "NULL", "NULL", new_player_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
                     update_info = [str(entity_val), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
