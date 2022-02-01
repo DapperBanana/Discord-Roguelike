@@ -8,12 +8,14 @@ import numpy
 import discord
 from discord.ext import commands
 
-#__________.__                                    .__               
-#\______   \  | _____  ___.__. ___________  ___  _|__| ______  _  __
-# |     ___/  | \__  \<   |  |/ __ \_  __ \ \  \/ /  |/ __ \ \/ \/ /
-# |    |   |  |__/ __ \\___  \  ___/|  | \/  \   /|  \  ___/\     / 
-# |____|   |____(____  / ____|\___  >__|      \_/ |__|\___  >\/\_/  
-#                    \/\/         \/                      \/   
+#
+#__________                    .__                  _________                                   
+#\______   \ ____   __________ |  |___  __ ____    /   _____/ ___________   ____   ____   ____  
+# |       _// __ \ /  ___/  _ \|  |\  \/ // __ \   \_____  \_/ ___\_  __ \_/ __ \_/ __ \ /    \ 
+# |    |   \  ___/ \___ (  <_> )  |_\   /\  ___/   /        \  \___|  | \/\  ___/\  ___/|   |  \
+# |____|_  /\___  >____  >____/|____/\_/  \___  > /_______  /\___  >__|    \___  >\___  >___|  /
+#        \/     \/     \/                     \/          \/     \/            \/     \/     \/ 
+#
 
 async def resolve_screen(raw_input):
     file_name = raw_input.author.id
@@ -136,7 +138,14 @@ async def resolve_screen(raw_input):
     await raw_input.channel.send("```" + f.read() + "```") 
 
     return   
-    
+#
+#__________        .__        __    _________                    .___.__  __          
+#\______   \_______|__| _____/  |_  \_   ___ \_______   ____   __| _/|__|/  |_  ______
+# |     ___/\_  __ \  |/    \   __\ /    \  \/\_  __ \_/ __ \ / __ | |  \   __\/  ___/
+# |    |     |  | \/  |   |  \  |   \     \____|  | \/\  ___// /_/ | |  ||  |  \___ \ 
+# |____|     |__|  |__|___|  /__|    \______  /|__|    \___  >____ | |__||__| /____  >
+#                          \/               \/             \/     \/               \/ 
+#     
 
 async def print_credits(raw_data, skip_bool, client):
     total_credits = 10
@@ -178,3 +187,92 @@ async def print_credits(raw_data, skip_bool, client):
         voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
     
     return
+
+#
+#__________                    .__                __________         __    __  .__             _________                                   
+#\______   \ ____   __________ |  |___  __ ____   \______   \_____ _/  |__/  |_|  |   ____    /   _____/ ___________   ____   ____   ____  
+# |       _// __ \ /  ___/  _ \|  |\  \/ // __ \   |    |  _/\__  \\   __\   __\  | _/ __ \   \_____  \_/ ___\_  __ \_/ __ \_/ __ \ /    \ 
+# |    |   \  ___/ \___ (  <_> )  |_\   /\  ___/   |    |   \ / __ \|  |  |  | |  |_\  ___/   /        \  \___|  | \/\  ___/\  ___/|   |  \
+# |____|_  /\___  >____  >____/|____/\_/  \___  >  |______  /(____  /__|  |__| |____/\___  > /_______  /\___  >__|    \___  >\___  >___|  /
+#        \/     \/     \/                     \/          \/      \/                     \/          \/     \/            \/     \/     \/ 
+#
+enemies = {
+    "m" : "mouse",
+    "b" : "bat",
+    "f" : "frog",
+    "s" : "spider",
+    "w" : "wolf",
+    "S" : "skeleton",
+    "I" : "imp",
+    "W" : "wizard",
+    "!" : "boss"
+}
+async def resolve_battle_screen(raw_input):
+
+    fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+    info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+    #load in old info
+    for row in range(len(info_array)):
+        if row > 0 and int(info_array[row][13]) == 1:
+            entity_val = int(info_array[row][0])
+            entity_char = info_array[row][1]
+    fname = "./enemies/" + str(enemies[entity_char]) + ".txt"
+    with open(fname) as f:
+        enemy_grid = f.readlines()
+    enemy_grid = [row.rstrip('\n') for row in enemy_grid]
+
+    #Now that we have the viewable area, we want to go and place everything onto the actual game screen
+    level_val = 1
+    blank_space = " "
+    game_screen_width = 42
+    game_screen_height = 42
+    #Next let's set up the complete game screen
+    game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
+    level_strings = [enemies[entity_char]]
+    #lets get the stats strings ready
+    fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+    info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+    character_level = int(info_array[0][5])
+    max_heath = 10
+    max_mana = 0
+    max_armor = 1
+    max_weapon = 1
+    max_attack = 3
+    for x in range(character_level):
+        max_heath += ((character_level-1)*5) + (character_level*5) + (character_level*2)
+        max_mana += (character_level*5) + (character_level*2)
+        max_armor += (character_level*2)
+        max_weapon = max_armor
+        max_attack += ((character_level-1)*5) + (character_level*5)
+    health = str(info_array[0][3]) + "/" + str(max_heath)
+    mana = str(info_array[0][4]) + "/" + str(max_mana)
+    armour = str(info_array[0][7]) + "/" + str(max_armor)
+    weapon = str(info_array[0][8]) + "/" + str(max_weapon)
+    attack = str(info_array[0][2]) + "/" + str(max_attack)
+    evade =  str(info_array[0][11])+ "%"
+    stats_grid = [['     Stats',' '],
+                ['     -----',' '],
+                ['Health :',health],
+                ['Attack :',attack],
+                ['Mana   :',mana],
+                ['Dodge  :',evade],
+                ['Armour :',armour],
+                ['Weapon :',weapon]]
+    for y in range(len(game_screen)):
+        for x in range(len(game_screen[y])):
+            #First lets print the stats on the side and then figure the if statement out for the viewable screen
+            if y < len(stats_grid) and x >= 13:
+                if (x - 13)  < len(stats_grid[y]):
+                    game_screen[y][x] = stats_grid[y][x-13]
+            elif y >=14 and x >= 3:
+                if (x - 3) < len(level_strings[y-14]):
+                    game_screen[y][x] = level_strings[y-14][x-3]
+            #Need to set up the confines on where the viewable screen can print
+            elif y >= 2 and y <= 12 and x >= 1 and x <= 11:
+                game_screen[y][x] = enemy_grid[y-2][x-1]
+
+    numpy.savetxt("./player_files/current_view.txt", game_screen, fmt='%s')
+    f = open("./player_files/current_view.txt", 'r')
+    await raw_input.channel.send("```" + f.read() + "```") 
+
+    return 
