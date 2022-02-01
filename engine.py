@@ -10,7 +10,7 @@ import game_info
 import random
 import discord
 from map_creator import generate_map
-from game_screen import resolve_screen
+from game_screen import resolve_battle_screen, resolve_screen
 from discord.ext import commands
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -311,13 +311,19 @@ async def move_player(direction, player_name, raw_input):
         player_health = int(info_array[0][3])
         percent_chance_of_upgrade = random.randint(0,19)
         if percent_chance_of_upgrade >= 0 and percent_chance_of_upgrade <= 4:
+            val = "You've found a new sword and upgraded your weapon!"
             player_weapon += 1
         elif percent_chance_of_upgrade >= 5 and percent_chance_of_upgrade <= 9:
+            val = "You've found a new chestplate and upgraded your armour!"
             player_armor += 1
         elif percent_chance_of_upgrade >= 10 and percent_chance_of_upgrade <= 14:
+            val = "You've found a glowing potion and increased your mana!"
             player_mana += 1
         elif percent_chance_of_upgrade >= 15 and percent_chance_of_upgrade <= 17:
+            val = "You've found a mysterious potion and increased your health!"
             player_health += 1
+        else:
+            val = "Unfortunately you've found nothing here..."
         update_info = ["1", "NULL", "NULL", player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, new_x, new_y, "NULL", "NULL", "NULL"]
         await game_info.force_update(raw_input, update_info)
         grid_array[player_y][player_x] = " "
@@ -673,6 +679,7 @@ async def start_battle(initiate, raw_input, client):
     voice.stop()
     voice.play(discord.FFmpegPCMAudio("./music/battle.mp3"))
     await raw_input.channel.send("Remember you can request a list of *actions* if you've forgotten your skills.")
+    await resolve_battle_screen(raw_input)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  _______  _______  _______  ___      _______    ______    _______  __   __  __    _  ______  

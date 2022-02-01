@@ -8,6 +8,15 @@ import numpy
 import game_info
 from discord.ext import commands
 
+#
+#  ________                                   __              _____                 
+# /  _____/  ____   ____   ________________ _/  |_  ____     /     \ _____  ______  
+#/   \  ____/ __ \ /    \_/ __ \_  __ \__  \\   __\/ __ \   /  \ /  \\__  \ \____ \ 
+#\    \_\  \  ___/|   |  \  ___/|  | \// __ \|  | \  ___/  /    Y    \/ __ \|  |_> >
+# \______  /\___  >___|  /\___  >__|  (____  /__|  \___  > \____|__  (____  /   __/ 
+#        \/     \/     \/     \/           \/          \/          \/     \/|__|
+#
+
 async def generate_map(raw_data):
     #Definitions
     file_name = "./player_files/active_" + str(raw_data.author.id) + ".txt"
