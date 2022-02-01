@@ -264,9 +264,9 @@ async def resolve_battle_screen(raw_input):
             if y < len(stats_grid) and x >= 13:
                 if (x - 13)  < len(stats_grid[y]):
                     game_screen[y][x] = stats_grid[y][x-13]
-            elif y >=14 and x >= 3:
-                if (x - 3) < len(level_strings[y-14]):
-                    game_screen[y][x] = level_strings[y-14][x-3]
+            #elif y >=14 and x >= 3:
+            #    if (x - 3) < len(level_strings[y-14]):
+            #        game_screen[y][x] = level_strings[y-14][x-3]
             #Need to set up the confines on where the viewable screen can print
             elif y == 2 and x == 1:
                 game_screen[y][x] = enemy_grid
