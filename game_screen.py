@@ -224,8 +224,8 @@ async def resolve_battle_screen(raw_input):
     #Now that we have the viewable area, we want to go and place everything onto the actual game screen
     level_val = 1
     blank_space = " "
-    game_screen_width = 42
-    game_screen_height = 42
+    game_screen_width = 20
+    game_screen_height = 20
     #Next let's set up the complete game screen
     game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
     level_strings = [enemies[entity_char]]
