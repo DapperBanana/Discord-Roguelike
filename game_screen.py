@@ -268,8 +268,8 @@ async def resolve_battle_screen(raw_input):
                 if (x - 3) < len(level_strings[y-14]):
                     game_screen[y][x] = level_strings[y-14][x-3]
             #Need to set up the confines on where the viewable screen can print
-            elif y >= 2 and y <= 12 and x >= 1 and x <= 11:
-                game_screen[y][x] = enemy_grid[y-2][x-1]
+            elif y == 2 and x == 1:
+                game_screen[y][x] = enemy_grid
 
     numpy.savetxt("./player_files/current_view.txt", game_screen, fmt='%s')
     f = open("./player_files/current_view.txt", 'r')
