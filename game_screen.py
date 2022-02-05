@@ -282,7 +282,7 @@ async def resolve_battle_screen(raw_input):
             #    if (x - 3) < len(level_strings[y-14]):
             #        game_screen[y][x] = level_strings[y-14][x-3]
             #Need to set up the confines on where the viewable screen can print
-            
+            #Testing 1 2 3
 
     numpy.savetxt("./player_files/current_view.txt", game_screen, fmt='%s', delimiter='')
     f = open("./player_files/current_view.txt", 'r')
