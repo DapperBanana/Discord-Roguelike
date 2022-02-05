@@ -672,9 +672,6 @@ async def start_battle(initiate, raw_input, client):
         if row > 0 and int(info_array[row][13]) == 1:
             entity_val = int(info_array[row][0])
     entity_char = str(info_array[entity_val-1][1])
-    fname = "./enemies/" + str(enemies[entity_char]) + ".txt"
-    f = open(fname, 'r')
-    await raw_input.channel.send("```" + f.read() + "```")
     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
     voice.stop()
     voice.play(discord.FFmpegPCMAudio("./music/battle.mp3"))
