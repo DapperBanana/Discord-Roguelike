@@ -286,7 +286,6 @@ async def resolve_battle_screen(raw_input):
 
     numpy.savetxt("./player_files/current_view.txt", game_screen, fmt='%s', delimiter='')
     f = open("./player_files/current_view.txt", 'r')
-    await raw_input.channel.send("```" + f.read() + "```") 
-    print(game_screen)
+    await raw_input.channel.send("```" + f.read() + "```")
 
     return 
