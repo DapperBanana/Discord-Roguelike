@@ -789,6 +789,7 @@ async def battle_round(raw_input, client):
                     await game_info.force_update(raw_input, update_info)
                     update_info = [str(entity_val), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
+                    await resolve_battle_screen(raw_input)
 
 async def out_of_battle(raw_input):
     #This is where we'll reopen the battle file and continue
