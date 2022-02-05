@@ -207,6 +207,17 @@ enemies = {
     "W" : "wizard",
     "!" : "boss"
 }
+enemy_grid_lengths = {
+    "m" : 9,
+    "b" : 5,
+    "f" : 7,
+    "s" : 5,
+    "w" : 15,
+    "S" : 15,
+    "I" : 10,
+    "W" : 14,
+    "!" : 18
+}
 async def resolve_battle_screen(raw_input):
 
     fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
@@ -224,8 +235,8 @@ async def resolve_battle_screen(raw_input):
     #Now that we have the viewable area, we want to go and place everything onto the actual game screen
     level_val = 1
     blank_space = " "
-    game_screen_width = 20
-    game_screen_height = 20
+    game_screen_width = 35
+    game_screen_height = 18
     #Next let's set up the complete game screen
     game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
     level_strings = [enemies[entity_char]]
@@ -261,15 +272,17 @@ async def resolve_battle_screen(raw_input):
     for y in range(len(game_screen)):
         for x in range(len(game_screen[y])):
             #First lets print the stats on the side and then figure the if statement out for the viewable screen
-            if y < len(stats_grid) and x >= 13:
-                if (x - 13)  < len(stats_grid[y]):
-                    game_screen[y][x] = stats_grid[y][x-13]
+            if y < len(stats_grid) and x >= 30:
+                if (x - 30)  < len(stats_grid[y]):
+                    game_screen[y][x] = stats_grid[y][x-30]
+            elif y < len(enemy_grid):
+                if x < len(enemy_grid[y]):
+                    game_screen[y][x] = enemy_grid[y][x]
             #elif y >=14 and x >= 3:
             #    if (x - 3) < len(level_strings[y-14]):
             #        game_screen[y][x] = level_strings[y-14][x-3]
             #Need to set up the confines on where the viewable screen can print
-            elif y == 2 and x == 1:
-                game_screen[y][x] = enemy_grid
+            
 
     numpy.savetxt("./player_files/current_view.txt", game_screen, fmt='%s')
     f = open("./player_files/current_view.txt", 'r')
