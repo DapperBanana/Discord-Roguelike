@@ -236,7 +236,9 @@ async def resolve_battle_screen(raw_input):
     level_val = 1
     blank_space = " "
     game_screen_width = 35
-    game_screen_height = 18
+    game_screen_height = len(enemy_grid)
+    if len(info_array) > len(enemy_grid):
+        game_screen_height = len(info_array)
     #Next let's set up the complete game screen
     game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
     level_strings = [enemies[entity_char]]
