@@ -657,10 +657,6 @@ enemies = {
 
 async def start_battle(initiate, raw_input, client):
     #I'll have to use the raw input to get the x and y and of the battle through the info file
-    if initiate == "pbattle":
-        await raw_input.channel.send("player initiated battle")
-    elif initiate == "ebattle":
-        await raw_input.channel.send("enemy initiated battle")
     fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
     x = [1]
     numpy.savetxt(fname, x)
@@ -676,7 +672,33 @@ async def start_battle(initiate, raw_input, client):
     voice.stop()
     voice.play(discord.FFmpegPCMAudio("./music/battle.mp3"))
     await raw_input.channel.send("Remember you can request a list of *actions* if you've forgotten your skills.")
+    #Next lets roll for initiative and dodge percentage
+    #First initiative
+    player_d_twenty = random.randint(1,20)
+    enemy_d_twenty = random.randint(1,20)
+    while player_d_twenty == enemy_d_twenty:
+        player_d_twenty = random.randint(1,20)
+        enemy_d_twenty = random.randint(1,20)
+    #Before we resolve the screen let's grab the dodge roll
+    #let's base the dodge off of the players level
+    character_level = int(info_array[0][5])
+    max_dodge = character_level * 10
+    dodge_roll = random.randint(0,max_dodge)
+    string_to_send = "You rolled a " + str(dodge_roll) + "%" + " chance of evasion!"
+    await raw_input.channel.send(string_to_send)
+    update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", dodge_roll, "NULL", "NULL"]
+    await game_info.force_update(raw_input, update_info)
     await resolve_battle_screen(raw_input)
+    string_to_send = "You rolled a " + str(player_d_twenty) + " for initiative!"
+    await raw_input.channel.send(string_to_send)
+    string_to_send = "The " + str(enemies[entity_char]) + " rolled a " + str(enemy_d_twenty) + " for initiative!"
+    await raw_input.channel.send(string_to_send)
+    if player_d_twenty > enemy_d_twenty:
+        update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", 1, "NULL"]
+        await game_info.force_update(raw_input, update_info)
+    elif enemy_d_twenty > player_d_twenty:
+        update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", 2, "NULL"]
+        await game_info.force_update(raw_input, update_info)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  _______  _______  _______  ___      _______    ______    _______  __   __  __    _  ______  

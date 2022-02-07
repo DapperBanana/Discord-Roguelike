@@ -95,29 +95,16 @@ async def resolve_screen(raw_input):
     fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
     info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
     character_level = int(info_array[0][5])
-    max_heath = 10
-    max_mana = 0
-    max_armor = 1
-    max_weapon = 1
-    max_attack = 3
-    for x in range(character_level):
-        max_heath += ((character_level-1)*5) + (character_level*5) + (character_level*2)
-        max_mana += (character_level*5) + (character_level*2)
-        max_armor += (character_level*2)
-        max_weapon = max_armor
-        max_attack += ((character_level-1)*5) + (character_level*5)
-    health = str(info_array[0][3]) + "/" + str(max_heath)
-    mana = str(info_array[0][4]) + "/" + str(max_mana)
-    armour = str(info_array[0][7]) + "/" + str(max_armor)
-    weapon = str(info_array[0][8]) + "/" + str(max_weapon)
-    attack = str(info_array[0][2]) + "/" + str(max_attack)
-    evade =  str(info_array[0][11])+ "%"
+    health = str(info_array[0][3])
+    mana = str(info_array[0][4])
+    armour = str(info_array[0][7])
+    weapon = str(info_array[0][8])
+    attack = str(info_array[0][2])
     stats_grid = [['     Stats',' '],
                 ['     -----',' '],
                 ['Health :',health],
                 ['Attack :',attack],
                 ['Mana   :',mana],
-                ['Dodge  :',evade],
                 ['Armour :',armour],
                 ['Weapon :',weapon]]
     for y in range(len(game_screen)):
@@ -245,23 +232,11 @@ async def resolve_battle_screen(raw_input):
     #lets get the stats strings ready
     fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
     info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
-    character_level = int(info_array[0][5])
-    max_heath = 10
-    max_mana = 0
-    max_armor = 1
-    max_weapon = 1
-    max_attack = 3
-    for x in range(character_level):
-        max_heath += ((character_level-1)*5) + (character_level*5) + (character_level*2)
-        max_mana += (character_level*5) + (character_level*2)
-        max_armor += (character_level*2)
-        max_weapon = max_armor
-        max_attack += ((character_level-1)*5) + (character_level*5)
-    health = str(info_array[0][3]) + "/" + str(max_heath)
-    mana = str(info_array[0][4]) + "/" + str(max_mana)
-    armour = str(info_array[0][7]) + "/" + str(max_armor)
-    weapon = str(info_array[0][8]) + "/" + str(max_weapon)
-    attack = str(info_array[0][2]) + "/" + str(max_attack)
+    health = str(info_array[0][3])
+    mana = str(info_array[0][4])
+    armour = str(info_array[0][7])
+    weapon = str(info_array[0][8])
+    attack = str(info_array[0][2])
     evade =  str(info_array[0][11])+ "%"
     stats_grid = [['     Stats',' '],
                 ['     -----',' '],
