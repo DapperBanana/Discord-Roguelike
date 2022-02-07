@@ -677,7 +677,6 @@ async def start_battle(initiate, raw_input, client):
     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
     voice.stop()
     voice.play(discord.FFmpegPCMAudio("./music/battle.mp3"))
-    await raw_input.channel.send("Remember you can request a list of *actions* if you've forgotten your skills.")
     #Next lets roll for initiative and dodge percentage
     #First initiative
     player_d_twenty = random.randint(1,20)
@@ -783,12 +782,15 @@ async def battle_round(raw_input, client):
                     percent_chance_of_upgrade = random.randint(0,9)
                     if percent_chance_of_upgrade == 1:
                         player_attack += 2
+                        await raw_input.channel.send("After your battle, you've found new strength!")
                     elif percent_chance_of_upgrade == 2:
                         player_health += 1
+                        await raw_input.channel.send("You're invigorated after your battle and now have more energy!")
                     elif percent_chance_of_upgrade == 3:
                         for mana_char in magical_entities:
                             if entity_char == mana_char:
                                 player_mana += 1
+                                await raw_input.channel.send("A glowing magical essence surrounds you after your recent kill...")
                     update_info = ["1", "NULL", player_attack, player_health, player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                     await game_info.force_update(raw_input, update_info)
                     update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
@@ -883,12 +885,15 @@ async def battle_round(raw_input, client):
                         percent_chance_of_upgrade = random.randint(0,9)
                         if percent_chance_of_upgrade == 1:
                             player_attack += 2
+                            await raw_input.channel.send("After your battle, you've found new strength!")
                         elif percent_chance_of_upgrade == 2:
                             player_health += 1
+                            await raw_input.channel.send("You're invigorated after your battle and now have more energy!")
                         elif percent_chance_of_upgrade == 3:
                             for mana_char in magical_entities:
                                 if entity_char == mana_char:
                                     player_mana += 1
+                                    await raw_input.channel.send("A glowing magical essence surrounds you after your recent kill...")
                         update_info = ["1", "NULL", player_attack, player_health, player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                         await game_info.force_update(raw_input, update_info)
                         update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
