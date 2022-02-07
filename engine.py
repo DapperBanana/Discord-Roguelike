@@ -29,11 +29,17 @@ monster_gallery = [
                 "b",
                 "f",
                 "p"]
-battle_commands = ["slash",
-                "cast",
-                "kill",
-                "actions",
-                "fireball"]
+battle_commands = ["fist",
+                "sword",
+                "burning hands",
+                "magic missile",
+                "fireball",
+                "witch bolt",
+                "scorching ray",
+                "lightning bolt",
+                "ice storm",
+                "finger of death",
+                "weapon choice"]
 active_command_list = ["logout",
                 "login",
                 "end mission",
@@ -699,6 +705,8 @@ async def start_battle(initiate, raw_input, client):
     elif enemy_d_twenty > player_d_twenty:
         update_info = ["1", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", 2, "NULL"]
         await game_info.force_update(raw_input, update_info)
+    string_to_send = "What is your preferred *weapon choice* for this next attack?"
+    await raw_input.channel.send(string_to_send)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # _______  _______  _______  _______  ___      _______    ______    _______  __   __  __    _  ______  
@@ -725,6 +733,10 @@ async def battle_round(raw_input, client):
     #This is where we'll reopen the battle file and continue
     for battle_command in battle_commands:
         if str(raw_input.content).lower() == battle_command:
+            if battle_command == "weapon choice":
+                #Display weapon screen
+                f = open("./game_screens/weapons.txt", 'r')
+                await raw_input.channel.send("```" + f.read() + "```") 
             #lets first find the enemy the player has encountered
             fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
             entity_val = 0
@@ -738,42 +750,107 @@ async def battle_round(raw_input, client):
             total_player_health = int(info_array[0][7]) + int(info_array[0][3])
             total_enemy_attack = int(info_array[entity_val-1][8]) + int(info_array[entity_val-1][2])
             total_enemy_health = int(info_array[entity_val-1][7]) + int(info_array[entity_val-1][3])
-            output_string = "You swung your sword for " + str(total_player_attack) + " points of damage!"
-            await raw_input.channel.send(output_string)
-            if total_player_attack >= total_enemy_health:
-                output_string = "You killed the " + enemy_name_list[entity_char] + "!"
+            #Lets also get the enemies dodge roll
+            character_level = int(info_array[0][5])
+            max_dodge = character_level * 10
+            enemy_dodge_roll = random.randint(0,max_dodge)
+            player_dodge_roll = int(info_array[0][11])
+            player_attack_chance = random.randint(1,100)
+            enemy_attack_chance = random.randint(1,100)
+            #Lets see if either attack hits
+            if player_attack_chance < enemy_dodge_roll:
+                total_player_attack = 0
+                #Player misses!
+            if enemy_attack_chance < player_dodge_roll:
+                total_enemy_attack = 0
+                #Enemy misses!
+            
+            #Next let's see if it's the player that goes first or the enemy!
+            initiative = int(info_array[0][12])
+            if initiative == 1:
+                #This means that the player is going first
+                output_string = "You swung your sword for " + str(total_player_attack) + " points of damage!"
                 await raw_input.channel.send(output_string)
-                #then update the info file
-                in_battle = 0
-                #we first have to award the player health or strength, and possibly even mana depending on whether it's a magical creature
-                player_attack = int(info_array[0][2])
-                player_health = int(info_array[0][3])
-                player_mana = int(info_array[0][4])
-                percent_chance_of_upgrade = random.randint(0,9)
-                if percent_chance_of_upgrade == 1:
-                    player_attack += 2
-                elif percent_chance_of_upgrade == 2:
-                    player_health += 1
-                elif percent_chance_of_upgrade == 3:
-                    for mana_char in magical_entities:
-                        if entity_char == mana_char:
-                            player_mana += 1
-                update_info = ["1", "NULL", player_attack, player_health, player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
-                await game_info.force_update(raw_input, update_info)
-                update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
-                await game_info.force_update(raw_input, update_info)
-                fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
-                os.remove(fname)
-                voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
-                voice.stop()
-                voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
-                await resolve_screen(raw_input)
-            else:
-                total_enemy_health -= total_player_attack
+                if total_player_attack >= total_enemy_health:
+                    output_string = "You killed the " + enemy_name_list[entity_char] + "!"
+                    await raw_input.channel.send(output_string)
+                    #then update the info file
+                    in_battle = 0
+                    #we first have to award the player health or strength, and possibly even mana depending on whether it's a magical creature
+                    player_attack = int(info_array[0][2])
+                    player_health = int(info_array[0][3])
+                    player_mana = int(info_array[0][4])
+                    percent_chance_of_upgrade = random.randint(0,9)
+                    if percent_chance_of_upgrade == 1:
+                        player_attack += 2
+                    elif percent_chance_of_upgrade == 2:
+                        player_health += 1
+                    elif percent_chance_of_upgrade == 3:
+                        for mana_char in magical_entities:
+                            if entity_char == mana_char:
+                                player_mana += 1
+                    update_info = ["1", "NULL", player_attack, player_health, player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                    await game_info.force_update(raw_input, update_info)
+                    update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                    await game_info.force_update(raw_input, update_info)
+                    fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
+                    os.remove(fname)
+                    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                    voice.stop()
+                    voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+                    await resolve_screen(raw_input)
+                else:
+                    total_enemy_health -= total_player_attack
+                    output_string = "The " + enemy_name_list[entity_char] + " attacked you for "+ str(total_enemy_attack) + " points of damage!"
+                    await raw_input.channel.send(output_string)
+                    total_player_health -= total_enemy_attack
+                    if total_player_health <= 0:
+                        fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
+                        os.remove(fname)
+                        fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+                        os.remove(fname)
+                        fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
+                        os.remove(fname)
+                        await raw_input.channel.purge(limit=defaultval)
+                        voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                        voice.stop()
+                        await voice.disconnect()
+                        f = open("./game_screens/death.txt", 'r')
+                        await raw_input.channel.send("```" + f.read() + "```") 
+                        await raw_input.channel.send("You have died in the catacombs; Better luck next time!")
+                        await raw_input.channel.send("Would you like to start a *new game*?")
+
+                    else:
+                        if total_player_health <= int(info_array[0][3]):
+                            new_player_health = total_player_health
+                            new_player_armor = 0
+                        elif total_player_health > int(info_array[0][3]):
+                            new_player_health = int(info_array[0][3])
+                            new_player_armor = total_player_health - int(info_array[0][3])
+                        #Now the same for enemies
+                        if total_enemy_health <= int(info_array[entity_val-1][3]):
+                            new_enemy_health = total_enemy_health
+                            new_enemy_armor = 0
+                        elif total_enemy_health > int(info_array[entity_val-1][3]):
+                            new_enemy_health = int(info_array[entity_val-1][3])
+                            new_enemy_armor = total_enemy_health - int(info_array[entity_val-1][3])
+                        #Now to save the health
+                        update_info = ["1", "NULL", "NULL", new_player_health, "NULL", "NULL", "NULL", new_player_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                        await game_info.force_update(raw_input, update_info)
+                        update_info = [str(entity_val), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                        await game_info.force_update(raw_input, update_info)
+                        await resolve_battle_screen(raw_input)
+                        string_to_send = "What is your preferred *weapon choice* for this next attack?"
+                        await raw_input.channel.send(string_to_send)
+            elif initiative == 2:
+
+                #ENEMY ATTACKS FIRST
+
                 output_string = "The " + enemy_name_list[entity_char] + " attacked you for "+ str(total_enemy_attack) + " points of damage!"
                 await raw_input.channel.send(output_string)
-                total_player_health -= total_enemy_attack
-                if total_player_health <= 0:
+
+                if total_enemy_attack >= total_player_health:
+                    #player is dead
                     fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
                     os.remove(fname)
                     fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
@@ -788,27 +865,65 @@ async def battle_round(raw_input, client):
                     await raw_input.channel.send("```" + f.read() + "```") 
                     await raw_input.channel.send("You have died in the catacombs; Better luck next time!")
                     await raw_input.channel.send("Would you like to start a *new game*?")
-
+                    
                 else:
-                    if total_player_health <= int(info_array[0][3]):
-                        new_player_health = total_player_health
-                        new_player_armor = 0
-                    elif total_player_health > int(info_array[0][3]):
-                        new_player_health = int(info_array[0][3])
-                        new_player_armor = total_player_health - int(info_array[0][3])
-                    #Now the same for enemies
-                    if total_enemy_health <= int(info_array[entity_val-1][3]):
-                        new_enemy_health = total_enemy_health
-                        new_enemy_armor = 0
-                    elif total_enemy_health > int(info_array[entity_val-1][3]):
-                        new_enemy_health = int(info_array[entity_val-1][3])
-                        new_enemy_armor = total_enemy_health - int(info_array[entity_val-1][3])
-                    #Now to save the health
-                    update_info = ["1", "NULL", "NULL", new_player_health, "NULL", "NULL", "NULL", new_player_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
-                    await game_info.force_update(raw_input, update_info)
-                    update_info = [str(entity_val), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
-                    await game_info.force_update(raw_input, update_info)
-                    await resolve_battle_screen(raw_input)
+                    total_player_health -= total_enemy_attack
+                    output_string = "You swung your sword for " + str(total_player_attack) + " points of damage!"
+                    await raw_input.channel.send(output_string)
+                    total_enemy_health -= total_player_attack
+                    if total_enemy_health <= 0:
+                        output_string = "You killed the " + enemy_name_list[entity_char] + "!"
+                        await raw_input.channel.send(output_string)
+                        #then update the info file
+                        in_battle = 0
+                        #we first have to award the player health or strength, and possibly even mana depending on whether it's a magical creature
+                        player_attack = int(info_array[0][2])
+                        player_health = int(info_array[0][3])
+                        player_mana = int(info_array[0][4])
+                        percent_chance_of_upgrade = random.randint(0,9)
+                        if percent_chance_of_upgrade == 1:
+                            player_attack += 2
+                        elif percent_chance_of_upgrade == 2:
+                            player_health += 1
+                        elif percent_chance_of_upgrade == 3:
+                            for mana_char in magical_entities:
+                                if entity_char == mana_char:
+                                    player_mana += 1
+                        update_info = ["1", "NULL", player_attack, player_health, player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                        await game_info.force_update(raw_input, update_info)
+                        update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                        await game_info.force_update(raw_input, update_info)
+                        fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
+                        os.remove(fname)
+                        voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                        voice.stop()
+                        voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+                        await resolve_screen(raw_input)
+
+                    else:
+                        if total_player_health <= int(info_array[0][3]):
+                            new_player_health = total_player_health
+                            new_player_armor = 0
+                        elif total_player_health > int(info_array[0][3]):
+                            new_player_health = int(info_array[0][3])
+                            new_player_armor = total_player_health - int(info_array[0][3])
+                        #Now the same for enemies
+                        if total_enemy_health <= int(info_array[entity_val-1][3]):
+                            new_enemy_health = total_enemy_health
+                            new_enemy_armor = 0
+                        elif total_enemy_health > int(info_array[entity_val-1][3]):
+                            new_enemy_health = int(info_array[entity_val-1][3])
+                            new_enemy_armor = total_enemy_health - int(info_array[entity_val-1][3])
+                        #Now to save the health
+                        update_info = ["1", "NULL", "NULL", new_player_health, "NULL", "NULL", "NULL", new_player_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                        await game_info.force_update(raw_input, update_info)
+                        update_info = [str(entity_val), "NULL", "NULL", new_enemy_health, "NULL", "NULL", "NULL", new_enemy_armor, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                        await game_info.force_update(raw_input, update_info)
+                        await resolve_battle_screen(raw_input)
+                        string_to_send = "What is your preferred *weapon choice* for this next attack?"
+                        await raw_input.channel.send(string_to_send)
+
+
 
 async def out_of_battle(raw_input):
     #This is where we'll reopen the battle file and continue
