@@ -43,8 +43,8 @@ stats_reader = {
     8 : "weapon",
     9 : "entity_x",
     10 : "entity_y",
-    11 : "next_direction",
-    12 : "cycle_val",
+    11 : "next_direction", #dodge roll for player
+    12 : "cycle_val", #resusing this for initiative in player slot
     13 : "battle"
 }
 

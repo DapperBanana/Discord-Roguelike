@@ -2,10 +2,7 @@ name: Python application
 
 on:
   pull_request:
-    branches: 
-      - 'main'
-      - 'feature-testing'
-
+    branches: [ main ]
 jobs:
   build:
     runs-on: self-hosted
