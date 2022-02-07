@@ -238,8 +238,8 @@ async def resolve_battle_screen(raw_input):
     weapon = str(info_array[0][8])
     attack = str(info_array[0][2])
     evade =  str(info_array[0][11])+ "%"
-    stats_grid = [['     Stats',' '],
-                ['     -----',' '],
+    stats_grid = [['Player Stats',' '],
+                ['------------',' '],
                 ['Health :',health],
                 ['Attack :',attack],
                 ['Mana   :',mana],
@@ -255,11 +255,6 @@ async def resolve_battle_screen(raw_input):
             elif y < len(enemy_grid):
                 if x < len(enemy_grid[y]):
                     game_screen[y][x] = enemy_grid[y][x]
-            #elif y >=14 and x >= 3:
-            #    if (x - 3) < len(level_strings[y-14]):
-            #        game_screen[y][x] = level_strings[y-14][x-3]
-            #Need to set up the confines on where the viewable screen can print
-            #testing 1 2 3 
 
     numpy.savetxt("./player_files/current_view.txt", game_screen, fmt='%s', delimiter='')
     f = open("./player_files/current_view.txt", 'r')
