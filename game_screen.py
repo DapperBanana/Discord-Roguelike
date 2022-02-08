@@ -222,12 +222,7 @@ async def resolve_battle_screen(raw_input):
     #Now that we have the viewable area, we want to go and place everything onto the actual game screen
     level_val = 1
     blank_space = " "
-    game_screen_width = 35
-    game_screen_height = len(enemy_grid)
-    if len(info_array) > len(enemy_grid):
-        game_screen_height = len(info_array)
-    #Next let's set up the complete game screen
-    game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
+    
     level_strings = [enemies[entity_char]]
     #lets get the stats strings ready
     fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
@@ -246,6 +241,12 @@ async def resolve_battle_screen(raw_input):
                 ['Dodge  :',evade],
                 ['Armour :',armour],
                 ['Weapon :',weapon]]
+    game_screen_width = 35
+    game_screen_height = len(enemy_grid)
+    if len(stats_grid) > len(enemy_grid):
+        game_screen_height = len(stats_grid)
+    #Next let's set up the complete game screen
+    game_screen = [[blank_space for i in range(game_screen_width)] for j in range(game_screen_height)]
     for y in range(len(game_screen)):
         for x in range(len(game_screen[y])):
             #First lets print the stats on the side and then figure the if statement out for the viewable screen

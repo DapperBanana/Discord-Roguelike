@@ -28,7 +28,12 @@ monster_gallery = [
                 "m",
                 "b",
                 "f",
-                "p"]
+                "s",
+                "w",
+                "S",
+                "I",
+                "W"
+    ]
 battle_commands = ["fist",
                 "sword",
                 "burning hands",
@@ -357,12 +362,12 @@ async def move_player(direction, player_name, raw_input, client):
         val = "door"
         if new_level < 10:
             await generate_map(raw_input, new_level)
-            await resolve_screen(raw_input)
             voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
             voice.stop()
             voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
             update_info = ["1", "NULL", player_strength, player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, "NULL", "NULL", "NULL", "NULL", "NULL"]
             await game_info.force_update(raw_input, update_info)
+            await resolve_screen(raw_input)
             await raw_input.channel.send("You feel stronger and ingorated from clearing out a level of the catacombs...")
             str_to_print = "Brave knight you have now made it to level " + str(new_level) + " of the catacombs!"
             await raw_input.channel.send(str_to_print)
