@@ -179,6 +179,8 @@ async def engine(text_input, user_id_info, client):
                                 elif text == "pbattle":
                                     await start_battle(text, text_input, client)
                                 else:
+                                    if text == "door":
+                                        break
                                     await resolve_screen(text_input)
                                     if text != "null":
                                         await text_input.channel.send(text)
@@ -352,9 +354,10 @@ async def move_player(direction, player_name, raw_input, client):
         fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
         os.remove(fname)
         await raw_input.channel.purge(limit=defaultval)
+        val = "door"
         if new_level < 10:
-            generate_map(raw_input, new_level)
-            resolve_screen(raw_input)
+            await generate_map(raw_input, new_level)
+            await resolve_screen(raw_input)
             voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
             voice.stop()
             voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
@@ -363,12 +366,12 @@ async def move_player(direction, player_name, raw_input, client):
             await raw_input.channel.send("You feel stronger and ingorated from clearing out a level of the catacombs...")
             str_to_print = "Brave knight you have now made it to level " + str(new_level) + " of the catacombs!"
             await raw_input.channel.send(str_to_print)
+            
         elif new_level == 10:
             await raw_input.channel.send("Brave knight you have made it out of the catacombs!")
             await raw_input.channel.send("Despite your great victory you realize your journey is only just beginning...")
             await raw_input.channel.send("Until you can enter the castle gates would you like to start a *new game*?")
-
-        
+            
     else:
         in_battle = 0
         for monster in monster_gallery:
