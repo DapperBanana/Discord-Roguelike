@@ -836,6 +836,7 @@ async def battle_round(raw_input, client):
                     player_mana -= 1
                     update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
+                    print(player_mana)
                     temp = random.randint(1,6)
                     total_player_attack += temp
                     output_string = "You rolled a " + str(temp) + "..."
@@ -954,6 +955,7 @@ async def battle_round(raw_input, client):
                     player_attack = int(info_array[0][2])
                     player_health = int(info_array[0][3])
                     player_mana = int(info_array[0][4])
+                    print(player_mana)
                     percent_chance_of_upgrade = random.randint(0,9)
                     if percent_chance_of_upgrade == 1:
                         player_attack += 2
@@ -1051,25 +1053,30 @@ async def battle_round(raw_input, client):
                     if total_enemy_health <= 0:
                         output_string = "You killed the " + enemy_name_list[entity_char] + "!"
                         await raw_input.channel.send(output_string)
+                        if total_player_health <= int(info_array[0][3]):
+                            new_player_health = total_player_health
+                            new_player_armor = 0
+                        elif total_player_health > int(info_array[0][3]):
+                            new_player_health = int(info_array[0][3])
+                            new_player_armor = total_player_health - int(info_array[0][3])
                         #then update the info file
                         in_battle = 0
                         #we first have to award the player health or strength, and possibly even mana depending on whether it's a magical creature
                         player_attack = int(info_array[0][2])
-                        player_health = int(info_array[0][3])
                         player_mana = int(info_array[0][4])
                         percent_chance_of_upgrade = random.randint(0,9)
                         if percent_chance_of_upgrade == 1:
                             player_attack += 2
                             await raw_input.channel.send("After your battle, you've found new strength!")
                         elif percent_chance_of_upgrade == 2:
-                            player_health += 1
+                            new_player_health += 1
                             await raw_input.channel.send("You're invigorated after your battle and now have more energy!")
                         elif percent_chance_of_upgrade == 3:
                             for mana_char in magical_entities:
                                 if entity_char == mana_char:
                                     player_mana += 1
                                     await raw_input.channel.send("A glowing magical essence surrounds you after your recent kill...")
-                        update_info = ["1", "NULL", player_attack, player_health, player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
+                        update_info = ["1", "NULL", player_attack, new_player_health, player_mana, "NULL", "NULL", new_player_armor, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                         await game_info.force_update(raw_input, update_info)
                         update_info = [str(entity_val), "X", "NULL", 0, "NULL", "NULL", "NULL", 0, "NULL", "NULL", "NULL", "NULL", "NULL", in_battle]
                         await game_info.force_update(raw_input, update_info)
