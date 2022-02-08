@@ -172,7 +172,7 @@ async def engine(text_input, user_id_info, client):
                         for x in range(iteration):
                             #I want to move the player using:
                             if await out_of_battle(text_input):
-                                text = await move_player(mov_dir, str(text_input.author.id), text_input)
+                                text = await move_player(mov_dir, str(text_input.author.id), text_input, client)
                                 enemy = await move_enemies(text_input)
                                 if enemy == "ebattle":
                                     await start_battle(enemy, text_input, client)
@@ -228,7 +228,7 @@ async def starting_commands(text_input, user_id_info, client):
         await text_input.channel.purge(limit=defaultval)
         #create a new active campaign mission
         #here we'll generate a map
-        await generate_map(text_input)
+        await generate_map(text_input, 1)
 
         #Now start the credits
         await text_input.channel.send("New campaign started for: " + str(username))
@@ -280,7 +280,7 @@ async def starting_commands(text_input, user_id_info, client):
 #|   |    |       ||   _   |  |   |  |   |___ |   |  | |  | ||_|| ||       | |     | |   |___ | ||_|| ||   |___ | | |   |  |   |  
 #|___|    |_______||__| |__|  |___|  |_______||___|  |_|  |_|   |_||_______|  |___|  |_______||_|   |_||_______||_|  |__|  |___|
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-async def move_player(direction, player_name, raw_input):
+async def move_player(direction, player_name, raw_input, client):
     #First find the player on the map
     with open("./player_files/active_" + player_name + ".txt") as f:
         input_grid = f.readlines()
@@ -338,8 +338,37 @@ async def move_player(direction, player_name, raw_input):
         file_name = "./player_files/active_" + str(player_name) + ".txt"
         numpy.savetxt(file_name, grid_array, fmt='%s')
     elif encounter_char == "<":
-        print("door!")
-        #This is where we're going to have to delete the game active file, then call a new (or remade) map creation call that will generate upper levels of the catacombs
+        #Grab the player level first so we can send it to generate a new level
+        fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+        info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+        new_level = int(info_array[0][5]) + 1
+        player_strength = int(info_array[0][2]) + 5
+        player_health = int(info_array[0][3]) + 5
+        player_mana = int(info_array[0][4])
+        player_armor = int(info_array[0][7])
+        player_weapon = int(info_array[0][8])
+        fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+        os.remove(fname)
+        fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
+        os.remove(fname)
+        await raw_input.channel.purge(limit=defaultval)
+        if new_level < 10:
+            generate_map(raw_input, new_level)
+            resolve_screen(raw_input)
+            voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+            voice.stop()
+            voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+            update_info = ["1", "NULL", player_strength, player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, "NULL", "NULL", "NULL", "NULL", "NULL"]
+            await game_info.force_update(raw_input, update_info)
+            await raw_input.channel.send("You feel stronger and ingorated from clearing out a level of the catacombs...")
+            str_to_print = "Brave knight you have now made it to level " + str(new_level) + " of the catacombs!"
+            await raw_input.channel.send(str_to_print)
+        elif new_level == 10:
+            await raw_input.channel.send("Brave knight you have made it out of the catacombs!")
+            await raw_input.channel.send("Despite your great victory you realize your journey is only just beginning...")
+            await raw_input.channel.send("Until you can enter the castle gates would you like to start a *new game*?")
+
+        
     else:
         in_battle = 0
         for monster in monster_gallery:

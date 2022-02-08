@@ -17,7 +17,7 @@ from discord.ext import commands
 #        \/     \/     \/     \/           \/          \/          \/     \/|__|
 #
 
-async def generate_map(raw_data):
+async def generate_map(raw_data, level):
     #Definitions
     file_name = "./player_files/active_" + str(raw_data.author.id) + ".txt"
     walls = "#"
@@ -92,7 +92,7 @@ async def generate_map(raw_data):
     enemy_dict = {
         "m" : ["m", '1', '6', '0', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
         "b" : ["b", '2', '5', '0', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
-        "f" : ["f", '5', '15', '1', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
+        "f" : ["f", '2', '5', '1', '1', '0', '0', '0', '-1', '-1', '-1', '4', '0'],
         "s" : ["s", '2', '5', '0', '1', '0', '0', '0', '-1', '-1', '-1', '2', '0'],
         "w" : ["w", '6', '15', '2', '3', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # Need
         "S" : ["S", '10', '45', '5', '5', '0', '0', '0', '-1', '-1', '-1', '0', '0'], # to
@@ -106,9 +106,13 @@ async def generate_map(raw_data):
         "m",
         "b",
         "f",
-        "s"
+        "s",
+        "w",
+        "S",
+        "I",
+        "W"
     ]
-    level = 1
+
     amount_of_enemies = level * random.randint(1,5)
     amount_of_items = (level * random.randint(1,2)) + 1 #Items spawns are going to be based on the level you're on, and there'll only be one door per level
     player_info = ["&", "3", "10", "0", level, "0", "1", "1", player_x, player_y, "0", "-1", "0"]
@@ -118,7 +122,18 @@ async def generate_map(raw_data):
     for x in range(len(player_info)):
         info_array[0][x+1] = player_info[x]
     for x in range(amount_of_enemies):
-        enemy_val = random.randint(0, len(enemy_list)-1)
+        if level < 3:
+            max_enemy_type = 3
+        elif level >=3 and level < 5:
+            max_enemy_type = 4
+        elif level >=5 and level < 7:
+            max_enemy_type = 5
+        elif level >=7 and level < 9:
+            max_enemy_type = 6
+        elif level == 9:
+            max_enemy_type = 7
+
+        enemy_val = random.randint(0, max_enemy_type)
         enemy_character = enemy_list[enemy_val]
         enemy_stats = enemy_dict[enemy_character]
         enemy_y = random.randint(0,room_height-1)
