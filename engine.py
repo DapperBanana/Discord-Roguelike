@@ -947,6 +947,8 @@ async def battle_round(raw_input, client):
             #Next let's see if it's the player that goes first or the enemy!
             initiative = int(info_array[0][12])
             if initiative == 1:
+                fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+                info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
                 #This means that the player is going first
                 output_string = "You swung your sword for " + str(total_player_attack) + " points of damage!"
                 await raw_input.channel.send(output_string)
@@ -1026,7 +1028,8 @@ async def battle_round(raw_input, client):
                         string_to_send = "What is your preferred *weapon choice* for this next attack?"
                         await raw_input.channel.send(string_to_send)
             elif initiative == 2:
-
+                fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+                info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
                 #ENEMY ATTACKS FIRST
 
                 output_string = "The " + enemy_name_list[entity_char] + " attacked you for "+ str(total_enemy_attack) + " points of damage!"
