@@ -101,4 +101,5 @@ async def force_update(raw_input, update_array):
         if info_array[row][0] == entity_val:
             for val in range(len(info_array[row])):
                 info_array[row][val] = update_array[val]
+            print(info_array[row])
     await save_game_stats(raw_input, info_array)
