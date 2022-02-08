@@ -833,10 +833,14 @@ async def battle_round(raw_input, client):
             if battle_command == "witch bolt":
                 #d8
                 if player_mana >= 1:
+                    str_to_print = "current player mana: " + str(player_mana)
+                    print(str_to_print)
                     player_mana -= 1
+                    str_to_print = "updated player mana: " + str(player_mana)
+                    print(str_to_print)
                     update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
-                    print(player_mana)
+                    
                     temp = random.randint(1,6)
                     total_player_attack += temp
                     output_string = "You rolled a " + str(temp) + "..."
