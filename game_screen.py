@@ -23,6 +23,11 @@ async def resolve_screen(raw_input):
     with open("./player_files/active_" + str(file_name) + ".txt") as f:
         input_grid = f.readlines()
     input_grid = [row.rstrip('\n') for row in input_grid]
+
+    fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+    info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+    character_level = int(info_array[0][5])
+
     player_x = 0
     player_y = 0
     room_width = len(input_grid)
@@ -82,7 +87,7 @@ async def resolve_screen(raw_input):
     #Let's find unique characters in viewable grid
 
     #Now that we have the viewable area, we want to go and place everything onto the actual game screen
-    level_val = 1
+    level_val = character_level
     blank_space = " "
     game_screen_width = 42
     game_screen_height = 17
