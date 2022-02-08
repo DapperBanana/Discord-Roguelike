@@ -833,11 +833,7 @@ async def battle_round(raw_input, client):
             if battle_command == "witch bolt":
                 #d8
                 if player_mana >= 1:
-                    str_to_print = "current player mana: " + str(player_mana)
-                    print(str_to_print)
                     player_mana -= 1
-                    str_to_print = "updated player mana: " + str(player_mana)
-                    print(str_to_print)
                     update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                     await game_info.force_update(raw_input, update_info)
                     
@@ -950,7 +946,7 @@ async def battle_round(raw_input, client):
                 fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
                 info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
                 #This means that the player is going first
-                output_string = "You swung your sword for " + str(total_player_attack) + " points of damage!"
+                output_string = "You attacked for " + str(total_player_attack) + " points of damage!"
                 await raw_input.channel.send(output_string)
                 if total_player_attack >= total_enemy_health:
                     output_string = "You killed the " + enemy_name_list[entity_char] + "!"
@@ -961,7 +957,6 @@ async def battle_round(raw_input, client):
                     player_attack = int(info_array[0][2])
                     player_health = int(info_array[0][3])
                     player_mana = int(info_array[0][4])
-                    print(player_mana)
                     percent_chance_of_upgrade = random.randint(0,9)
                     if percent_chance_of_upgrade == 1:
                         player_attack += 2
@@ -1054,7 +1049,7 @@ async def battle_round(raw_input, client):
                     
                 else:
                     total_player_health -= total_enemy_attack
-                    output_string = "You swung your sword for " + str(total_player_attack) + " points of damage!"
+                    output_string = "You attacked for " + str(total_player_attack) + " points of damage!"
                     await raw_input.channel.send(output_string)
                     total_enemy_health -= total_player_attack
                     if total_enemy_health <= 0:
@@ -1071,7 +1066,6 @@ async def battle_round(raw_input, client):
                         #we first have to award the player health or strength, and possibly even mana depending on whether it's a magical creature
                         player_attack = int(info_array[0][2])
                         player_mana = int(info_array[0][4])
-                        print(player_mana)
                         percent_chance_of_upgrade = random.randint(0,9)
                         if percent_chance_of_upgrade == 1:
                             player_attack += 2
