@@ -772,7 +772,8 @@ async def battle_round(raw_input, client):
             if battle_command == "weapon choice":
                 #Display weapon screen
                 f = open("./game_screens/weapons.txt", 'r')
-                await raw_input.channel.send("```" + f.read() + "```") 
+                await raw_input.channel.send("```" + f.read() + "```")
+                break
             #lets first find the enemy the player has encountered
             fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
             entity_val = 0
@@ -781,8 +782,141 @@ async def battle_round(raw_input, client):
                 if row > 0 and int(info_array[row][13]) == 1:
                     entity_val = int(info_array[row][0])
             entity_char = str(info_array[entity_val-1][1])
-            #Let's hurt the player and such
-            total_player_attack = int(info_array[0][8]) + int(info_array[0][2])
+            total_player_attack = 0
+            player_mana = int(info_array[0][4])
+            #In order to find out how much damage the player does we're going to have to figure out what kind of attack was done
+            if battle_command == "fist":
+                #fist is just equivalent of your strength
+                total_player_attack = int(info_array[0][2])
+            if battle_command == "sword":
+                #sword is as many d8's as your weapon mod is
+                weapon_mod = int(info_array[0][8])
+                for x in range(weapon_mod):
+                    temp = random.randint(1,8)
+                    total_player_attack += temp
+                    output_string = "You rolled a " + str(temp) + "..."
+                    await raw_input.channel.send(output_string)
+            if battle_command == "burning hands":
+                #d4+d6
+                #First gotta check if their mana exists!!
+                if player_mana >= 1:
+                    player_mana -= 1
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    temp = random.randint(1,4)
+                    total_player_attack += temp
+                    output_string = "You rolled a " + str(temp) + "..."
+                    await raw_input.channel.send(output_string)
+                    temp = random.randint(1,6)
+                    total_player_attack += temp
+                    output_string = "You rolled a " + str(temp) + "..."
+                    await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
+
+            if battle_command == "magic missile":
+                #d8
+                if player_mana >= 1:
+                    player_mana -= 1
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    temp = random.randint(1,8)
+                    total_player_attack += temp
+                    output_string = "You rolled a " + str(temp) + "..."
+                    await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
+            if battle_command == "witch bolt":
+                #d8
+                if player_mana >= 1:
+                    player_mana -= 1
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    temp = random.randint(1,6)
+                    total_player_attack += temp
+                    output_string = "You rolled a " + str(temp) + "..."
+                    await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
+            if battle_command == "scorching ray":
+                #d10 2 mana
+                if player_mana >= 2:
+                    player_mana -= 2
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    temp = random.randint(1,10)
+                    total_player_attack += temp
+                    output_string = "You rolled a " + str(temp) + "..."
+                    await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
+            if battle_command == "fireball":
+                #d12 3 mana
+                if player_mana >= 3:
+                    player_mana -= 3
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    temp = random.randint(1,12)
+                    total_player_attack += temp
+                    output_string = "You rolled a " + str(temp) + "..."
+                    await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
+            if battle_command == "lightning bolt":
+                #2d8 3 mana
+                if player_mana >= 3:
+                    player_mana -= 3
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    for x in range(2):
+                        temp = random.randint(1,8)
+                        total_player_attack += temp
+                        output_string = "You rolled a " + str(temp) + "..."
+                        await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
+            if battle_command == "ice storm":
+                #3d8 4 mana
+                if player_mana >= 4:
+                    player_mana -= 4
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    for x in range(3):
+                        temp = random.randint(1,8)
+                        total_player_attack += temp
+                        output_string = "You rolled a " + str(temp) + "..."
+                        await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
+            if battle_command == "finger of death":
+                #4d12 7 mana
+                if player_mana >= 7:
+                    player_mana -= 7
+                    update_info = ["1", "NULL", "NULL", "NULL", player_mana, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                    await game_info.force_update(raw_input, update_info)
+                    for x in range(4):
+                        temp = random.randint(1,12)
+                        total_player_attack += temp
+                        output_string = "You rolled a " + str(temp) + "..."
+                        await raw_input.channel.send(output_string)
+                else:
+                    output_string = "You don't have enough mana for that!"
+                    await raw_input.channel.send(output_string)
+                    break
             total_player_health = int(info_array[0][7]) + int(info_array[0][3])
             total_enemy_attack = int(info_array[entity_val-1][8]) + int(info_array[entity_val-1][2])
             total_enemy_health = int(info_array[entity_val-1][7]) + int(info_array[entity_val-1][3])
@@ -796,9 +930,13 @@ async def battle_round(raw_input, client):
             #Lets see if either attack hits
             if player_attack_chance < enemy_dodge_roll:
                 total_player_attack = 0
+                output_string = "The " + enemy_name_list[entity_char] + " dodged your attack!"
+                await raw_input.channel.send(output_string)
                 #Player misses!
             if enemy_attack_chance < player_dodge_roll:
                 total_enemy_attack = 0
+                output_string = "You dodged the " + enemy_name_list[entity_char] + "!"
+                await raw_input.channel.send(output_string)
                 #Enemy misses!
             
             #Next let's see if it's the player that goes first or the enemy!
