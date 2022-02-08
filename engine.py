@@ -1064,6 +1064,7 @@ async def battle_round(raw_input, client):
                         #we first have to award the player health or strength, and possibly even mana depending on whether it's a magical creature
                         player_attack = int(info_array[0][2])
                         player_mana = int(info_array[0][4])
+                        print(player_mana)
                         percent_chance_of_upgrade = random.randint(0,9)
                         if percent_chance_of_upgrade == 1:
                             player_attack += 2
