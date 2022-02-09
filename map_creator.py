@@ -256,14 +256,14 @@ COMMON_MONO_FONT_FILENAMES = [
 ]
 
 
-def save_mini_map(raw_input):
+async def save_mini_map(raw_input):
     game_file = "./player_files/active_" + str(raw_input.author.id) + ".txt"
-    image = textfile_to_image(game_file)
+    image = await textfile_to_image(game_file)
     image.show()
     image.save('./game_screens/map.png')
 
 
-def textfile_to_image(textfile_path):
+async def textfile_to_image(textfile_path):
     """Convert text file to a grayscale image.
 
     arguments:
