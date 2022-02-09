@@ -451,7 +451,7 @@ async def move_player(direction, player_name, raw_input, client):
         #So now we have updated the game info file, and moved the player ahead
         grid_array[player_y][player_x] = " "
         grid_array[new_y][new_x] = "&"
-        if monster == "!":
+        if encounter_char == "!":
             grid_array[new_y -1][new_x] = "<"
         #save it to the active player file
         file_name = "./player_files/active_" + str(player_name) + ".txt"
