@@ -37,6 +37,8 @@ async def resolve_screen(raw_input):
     #Now that we have the grid let's remove the whitespaces
     void = "-"
     grid_array = [[void for i in range(room_height)] for j in range(room_width)]
+    str_to_print = "room height: " + str(len(grid_array)) + " | room width: " + str(len(grid_array[0]))
+    print(str_to_print)
     for y in range(0,room_height):
         for x in range(0,room_width):
             #if x % 2 == 0:
