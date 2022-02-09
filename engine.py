@@ -348,7 +348,7 @@ async def move_player(direction, player_name, raw_input, client):
         #Grab the player level first so we can send it to generate a new level
         fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
-        new_level = int(info_array[0][5]) + 1
+        new_level = 10 #int(info_array[0][5]) + 1
         player_strength = int(info_array[0][2]) + 1
         player_health = int(info_array[0][3]) + 2
         player_mana = int(info_array[0][4])
@@ -371,8 +371,43 @@ async def move_player(direction, player_name, raw_input, client):
             await raw_input.channel.send("You feel stronger and ingorated from clearing out a level of the catacombs...")
             str_to_print = "Brave knight you have now made it to level " + str(new_level) + " of the catacombs!"
             await raw_input.channel.send(str_to_print)
+            if new_level == 3:
+                await raw_input.channel.send("You hear an ominous howling...")
+            elif new_level == 5:
+                await raw_input.channel.send("You hear the sound of bones rattling...")
+            elif new_level == 7:
+                await raw_input.channel.send("You hear fire crackling in the distance...")
+            elif new_level == 9:
+                await raw_input.channel.send("You hear the sounds of chanting echo...")
+
             
         elif new_level == 10:
+            #We'll have to replace the game active file and info file with the text files pre-created
+            fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
+            with open("./game_screens/final_boss.txt") as f:
+                input_grid = f.readlines()
+            input_grid = [row.rstrip('\n') for row in input_grid]
+            player_x = 0
+            player_y = 0
+            room_width = len(input_grid)
+            room_height = int((len(input_grid[0]) + 1) / 2)
+            #Now that we have the grid let's remove the whitespaces
+            void = "-"
+            grid_array = [[void for i in range(room_height)] for j in range(room_width)]
+            for y in range(0,len(input_grid)-1):
+                for x in range(0,len(input_grid[0])-1):
+                    if x % 2 == 0:
+                        grid_array[y][int(x/2)] = input_grid[y][x]
+            #Lastly let's find the player x and y
+            for y in range(0,len(grid_array)-1):
+                for x in range(0,len(grid_array[0])-1):
+                    if grid_array[y][x] == "&":
+                        player_x = x
+                        player_y = y
+            numpy.savetxt(fname, input_grid, fmt='%s')
+            #next create the info file and update it with the current player info
+
+        elif new_level > 10:
             await raw_input.channel.send("Brave knight you have made it out of the catacombs!")
             await raw_input.channel.send("Despite your great victory you realize your journey is only just beginning...")
             await raw_input.channel.send("Until you can enter the castle gates would you like to start a *new game*?")
@@ -547,6 +582,10 @@ async def move_enemies(raw_input):
             amount_of_enemies = int(info_array[row][0]) - 2
     #Now that we have the amount of enemies, let's start cycling through them and updating everything.
     return_val = "null"
+    #next let's check if it's the 10th level
+    current_level = int(info_array[0][5])
+    if current_level == 10:
+        return return_val
     for enemy in range(amount_of_enemies):
         #First lets grab the units x and y
         enemy_type = info_array[enemy + 1][1]
@@ -950,6 +989,11 @@ async def battle_round(raw_input, client):
                 await raw_input.channel.send(output_string)
                 if total_player_attack >= total_enemy_health:
                     output_string = "You killed the " + enemy_name_list[entity_char] + "!"
+
+                    ##
+                    ## NEED TO INPUT THE DOOR ABOVE THE BOSS IF YOU"RE ON THE FINAL LEVEL
+                    ##
+                    ##
                     await raw_input.channel.send(output_string)
                     #then update the info file
                     in_battle = 0
@@ -977,7 +1021,30 @@ async def battle_round(raw_input, client):
                     os.remove(fname)
                     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
                     voice.stop()
-                    voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+                    level = int(info_array[0][5])
+                    if level < 10:
+                        voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+                    elif level == 10:
+                        #place the door on the screen in the active map
+                        door_x = int(info_array[0][9])
+                        door_y = int(info_array[0][10])
+                        fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
+                        with open(fname) as f:
+                            input_grid = f.readlines()
+                        input_grid = [row.rstrip('\n') for row in input_grid]
+                        player_x = 0
+                        player_y = 0
+                        room_width = len(input_grid)
+                        room_height = int((len(input_grid[0]) + 1) / 2)
+                        #Now that we have the grid let's remove the whitespaces
+                        void = "-"
+                        grid_array = [[void for i in range(room_height)] for j in range(room_width)]
+                        for y in range(0,len(input_grid)-1):
+                            for x in range(0,len(input_grid[0])-1):
+                                if x % 2 == 0:
+                                    grid_array[y][int(x/2)] = input_grid[y][x]
+                        grid_array[door_y][door_x] = "<"
+                        numpy.savetxt(fname, input_grid, fmt='%s')
                     await resolve_screen(raw_input)
                 else:
                     total_enemy_health -= total_player_attack
@@ -1054,6 +1121,10 @@ async def battle_round(raw_input, client):
                     total_enemy_health -= total_player_attack
                     if total_enemy_health <= 0:
                         output_string = "You killed the " + enemy_name_list[entity_char] + "!"
+                        ##
+                        ## NEED TO INPUT THE DOOR ABOVE THE BOSS IF YOU"RE ON THE FINAL LEVEL
+                        ##
+                        ##
                         await raw_input.channel.send(output_string)
                         if total_player_health <= int(info_array[0][3]):
                             new_player_health = total_player_health
