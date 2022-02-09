@@ -9,7 +9,7 @@ import game_screen
 import game_info
 import random
 import discord
-from map_creator import generate_map
+from map_creator import generate_map, save_mini_map
 from game_screen import resolve_battle_screen, resolve_screen
 from discord.ext import commands
 
@@ -522,7 +522,10 @@ async def input_parse(raw_input, client):
             elif formatted_input == "login":
                 message_to_send = "You are currently playing!"
             elif formatted_input == "map":
+                await save_mini_map(raw_input)
                 await raw_input.channel.send(file=discord.File('./game_screens/map.png'))
+            elif formatted_input == "inventory":
+                await raw_input.channel.send("inventory: -map")
     #After we've iterated through the commands list let's now see if we're dealing with a direction/movement command
     #First we're looking for just a direction, no iteration
     for direction in movement_list:
