@@ -30,8 +30,10 @@ async def resolve_screen(raw_input):
 
     player_x = 0
     player_y = 0
-    room_height = len(input_grid)
-    room_width = int((len(input_grid[0]) + 1) / 2)
+    room_width = len(input_grid)
+    room_height = int((len(input_grid[0]) + 1) / 2)
+    str_to_print = "room height: " + str(room_height) + " | room width: " + str(room_width)
+    print(str_to_print)
     #Now that we have the grid let's remove the whitespaces
     void = "-"
     grid_array = [[void for i in range(room_height)] for j in range(room_width)]
