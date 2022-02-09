@@ -522,7 +522,7 @@ async def input_parse(raw_input, client):
             elif formatted_input == "login":
                 message_to_send = "You are currently playing!"
             elif formatted_input == "map":
-                await client.channel.send(file=discord.File('./game_screens/map.png'))
+                await raw_input.channel.send(file=discord.File('./game_screens/map.png'))
     #After we've iterated through the commands list let's now see if we're dealing with a direction/movement command
     #First we're looking for just a direction, no iteration
     for direction in movement_list:
