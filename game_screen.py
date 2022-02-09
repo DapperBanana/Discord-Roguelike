@@ -45,7 +45,10 @@ async def resolve_screen(raw_input):
             if grid_array[y][x] == "&":
                 player_x = x
                 player_y = y
-
+    print("Player X:")
+    print(player_x)
+    print("Player Y:")
+    print(player_y)
 
     #Next lets grab what the player can see (this is multiplied by 2, this is + AND - player x and same with y)
     player_view_x,player_view_y = (5, 5)
