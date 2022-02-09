@@ -406,6 +406,25 @@ async def move_player(direction, player_name, raw_input, client):
                         player_y = y
             numpy.savetxt(fname, input_grid, fmt='%s')
             #next create the info file and update it with the current player info
+            infofname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+            fname = "./game_screens/final_boss_stats.txt"
+            info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+            update_array = ["1", "NULL", player_strength, player_health, player_mana, new_level, "NULL", player_armor, player_weapon, "NULL", "NULL", "NULL", "NULL", "NULL"]
+            entity_val = update_array[0]
+            #load in old info
+            for row in range(len(info_array)):
+                if info_array[row][0] == entity_val:
+                    old_array = info_array[row]
+            for element in range(len(update_array)):
+                if update_array[element] == "NULL":
+                    update_array[element] = old_array[element]
+            #next save it back to the info file
+            for row in range(len(info_array)):
+                if info_array[row][0] == entity_val:
+                    for val in range(len(info_array[row])):
+                        info_array[row][val] = update_array[val]
+            await game_info.save_game_stats(raw_input, info_array)
+
 
         elif new_level > 10:
             await raw_input.channel.send("Brave knight you have made it out of the catacombs!")
