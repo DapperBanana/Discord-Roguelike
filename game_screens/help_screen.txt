@@ -10,9 +10,9 @@
 #                                          #
 #   Basic Commands:                        #
 #     new game         login views the     #
-#     login            status of your game #
-#     pause            and allows you to   #
-#     end game         take your next steps#
+#     login             status of your game#
+#     pause                                #
+#     end game                             #
 #                                          #
 #                                          #
 #   Basic Movement:                        #
@@ -20,13 +20,13 @@
 #     e or east         a dash, type the   #
 #     s or south        amount of spaces   #
 #     w or west         to dash. i.e:      #
-#     u or up            "5e" would mean   #
-#     d or down           5 spaces east    #
+#                        "5e" would mean   #
+#                         5 spaces east    #
 #                                          #
 #   Basic Actions:                         #
-#     look                                 #
-#     stats                                #
-#                                          #
+#     map              Opens the full level#
+#                        map (needs to be  #
+#                        found first)      #
 #                                          #
 #                                          #
 #                                          #
