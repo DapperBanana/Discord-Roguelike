@@ -46,14 +46,15 @@ battle_commands = ["fist",
                 "ice storm",
                 "finger of death",
                 "weapon choice"]
-active_command_list = ["logout",
+active_command_list = ["wait",
                 "login",
                 "end mission",
                 "exit",
                 "pause",
                 "print",
                 "enter",
-                "help"]
+                "help",
+                "map"]
 starting_command_list = [  "login",
                     "continue",
                     "new game",
@@ -349,7 +350,7 @@ async def move_player(direction, player_name, raw_input, client):
         #Grab the player level first so we can send it to generate a new level
         fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
-        new_level = 10 #int(info_array[0][5]) + 1
+        new_level = int(info_array[0][5]) + 1
         player_strength = int(info_array[0][2]) + 1
         player_health = int(info_array[0][3]) + 2
         player_mana = int(info_array[0][4])
@@ -520,6 +521,8 @@ async def input_parse(raw_input, client):
                 await resolve_screen(raw_input)
             elif formatted_input == "login":
                 message_to_send = "You are currently playing!"
+            elif formatted_input == "map":
+                await client.channel.send(file=discord.File('./game_screens/map.png'))
     #After we've iterated through the commands list let's now see if we're dealing with a direction/movement command
     #First we're looking for just a direction, no iteration
     for direction in movement_list:
