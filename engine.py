@@ -348,7 +348,7 @@ async def move_player(direction, player_name, raw_input, client):
         #Grab the player level first so we can send it to generate a new level
         fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
-        new_level = int(info_array[0][5]) + 1
+        new_level = 10 #int(info_array[0][5]) + 1
         player_strength = int(info_array[0][2]) + 1
         player_health = int(info_array[0][3]) + 2
         player_mana = int(info_array[0][4])
