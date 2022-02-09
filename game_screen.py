@@ -37,10 +37,13 @@ async def resolve_screen(raw_input):
     #Now that we have the grid let's remove the whitespaces
     void = "-"
     grid_array = [[void for i in range(room_height)] for j in range(room_width)]
-    for y in range(0,len(input_grid)-1):
-        for x in range(0,len(input_grid[0])-1):
-            if x % 2 == 0:
-                grid_array[y][int(x/2)] = input_grid[y][x]
+    for y in range(0,room_height):
+        for x in range(0,room_width):
+            #if x % 2 == 0:
+            #    print()
+            str_to_print = "y: " + str(y) + " | x: " + str(x)
+            print(str_to_print)
+            grid_array[y][x] = input_grid[y][int(x * 2)]
     #Lastly let's find the player x and y
     for y in range(0,len(grid_array)-1):
         for x in range(0,len(grid_array[0])-1):
