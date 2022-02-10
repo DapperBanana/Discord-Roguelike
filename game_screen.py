@@ -160,7 +160,9 @@ async def print_credits(raw_data, skip_bool, client):
             os.remove(file_name)
             voice = discord.utils.get(client.voice_clients, guild=raw_data.guild)
             voice.stop()
-            voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+            music_val = random.randint(1,15)
+            dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
+            voice.play(discord.FFmpegPCMAudio(dungeon_song))
 
 
     else:
@@ -174,7 +176,9 @@ async def print_credits(raw_data, skip_bool, client):
         os.remove(file_name)
         voice = discord.utils.get(client.voice_clients, guild=raw_data.guild)
         voice.stop()
-        voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+        music_val = random.randint(1,15)
+        dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
+        voice.play(discord.FFmpegPCMAudio(dungeon_song))
     
     return
 
