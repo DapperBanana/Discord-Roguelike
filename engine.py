@@ -264,7 +264,9 @@ async def starting_commands(text_input, user_id_info, client):
             voice_channel = discord.utils.get(text_input.guild.voice_channels, name="The Catacombs")
             await voice_channel.connect()
             voice = discord.utils.get(client.voice_clients, guild=text_input.guild)
-            voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+            music_val = random.randint(1,15)
+            dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
+            voice.play(discord.FFmpegPCMAudio(dungeon_song))
             await text_input.channel.send("When you are ready feel free to *enter* the catacombs!")
         else:
             await text_input.channel.send("No such campaign exists, do you want to make a *new game*?")
@@ -366,7 +368,9 @@ async def move_player(direction, player_name, raw_input, client):
             await generate_map(raw_input, new_level)
             voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
             voice.stop()
-            voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+            music_val = random.randint(1,15)
+            dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
+            voice.play(discord.FFmpegPCMAudio(dungeon_song))
             update_info = ["1", "NULL", player_strength, player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, "NULL", "NULL", "NULL", "NULL", "NULL"]
             await game_info.force_update(raw_input, update_info)
             await resolve_screen(raw_input)
@@ -426,6 +430,10 @@ async def move_player(direction, player_name, raw_input, client):
                     for val in range(len(info_array[row])):
                         info_array[row][val] = update_array[val]
             await game_info.save_game_stats(raw_input, info_array)
+            voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+            voice.stop()
+            voice.play(discord.FFmpegPCMAudio("./music/final_boss_level"))
+
 
 
         elif new_level > 10:
@@ -780,7 +788,13 @@ async def start_battle(initiate, raw_input, client):
     entity_char = str(info_array[entity_val-1][1])
     voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
     voice.stop()
-    voice.play(discord.FFmpegPCMAudio("./music/battle.mp3"))
+    player_level = int(info_array[0][5])
+    if player_level < 10:
+        music_val = random.randint(1,3)
+        battle_song = "./music/battle_" + str(music_val) + ".mp3"
+        voice.play(discord.FFmpegPCMAudio(battle_song))
+    else:
+        voice.play(discord.FFmpegPCMAudio("./music/final_boss_battle.mp3"))
     #Next lets roll for initiative and dodge percentage
     #First initiative
     player_d_twenty = random.randint(1,20)
@@ -1051,7 +1065,9 @@ async def battle_round(raw_input, client):
                     voice.stop()
                     level = int(info_array[0][5])
                     if level < 10:
-                        voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+                        music_val = random.randint(1,15)
+                        dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
+                        voice.play(discord.FFmpegPCMAudio(dungeon_song))
                     elif level == 10:
                         #place the door on the screen in the active map
                         door_x = int(info_array[0][9])
@@ -1185,7 +1201,32 @@ async def battle_round(raw_input, client):
                         os.remove(fname)
                         voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
                         voice.stop()
-                        voice.play(discord.FFmpegPCMAudio("./music/dungeon.mp3"))
+                        level = int(info_array[0][5])
+                        if level < 10:
+                            music_val = random.randint(1,15)
+                            dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
+                            voice.play(discord.FFmpegPCMAudio(dungeon_song))
+                        elif level == 10:
+                            #place the door on the screen in the active map
+                            door_x = int(info_array[0][9])
+                            door_y = int(info_array[0][10])
+                            fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
+                            with open(fname) as f:
+                                input_grid = f.readlines()
+                            input_grid = [row.rstrip('\n') for row in input_grid]
+                            player_x = 0
+                            player_y = 0
+                            room_width = len(input_grid)
+                            room_height = int((len(input_grid[0]) + 1) / 2)
+                            #Now that we have the grid let's remove the whitespaces
+                            void = "-"
+                            grid_array = [[void for i in range(room_height)] for j in range(room_width)]
+                            for y in range(0,len(input_grid)-1):
+                                for x in range(0,len(input_grid[0])-1):
+                                    if x % 2 == 0:
+                                        grid_array[y][int(x/2)] = input_grid[y][x]
+                            grid_array[door_y][door_x] = "<"
+                            numpy.savetxt(fname, input_grid, fmt='%s')
                         await resolve_screen(raw_input)
 
                     else:
