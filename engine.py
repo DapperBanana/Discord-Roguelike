@@ -326,6 +326,17 @@ async def move_player(direction, player_name, raw_input, client):
         player_armor = int(info_array[0][7])
         player_mana = int(info_array[0][4])
         player_health = int(info_array[0][3])
+        character_level = int(info_array[0][5])
+        #Grab the game score
+        for row in range(len(info_array)):
+            if str(info_array[row][1]) == "<":
+                score_row = row
+        enemies_killed_score = int(info_array[score_row][2])
+        items_gathered_score = int(info_array[score_row][3])
+        armor_bonuses_score = int(info_array[score_row][4])
+        levels_cleared_score = (character_level - 1) * 100
+        weapon_bonuses_score = player_weapon - 1
+        total_score = enemies_killed_score + items_gathered_score + levels_cleared_score + armor_bonuses_score + weapon_bonuses_score
         percent_chance_of_upgrade = random.randint(0,19)
         if percent_chance_of_upgrade >= 0 and percent_chance_of_upgrade <= 4:
             val = "You've found a new sword and upgraded your weapon!"
@@ -333,6 +344,7 @@ async def move_player(direction, player_name, raw_input, client):
         elif percent_chance_of_upgrade >= 5 and percent_chance_of_upgrade <= 9:
             val = "You've found a new chestplate and upgraded your armour!"
             player_armor += 1
+            armor_bonuses_score += 1
         elif percent_chance_of_upgrade >= 10 and percent_chance_of_upgrade <= 14:
             val = "You've found a glowing potion and increased your mana!"
             player_mana += 1
@@ -341,7 +353,10 @@ async def move_player(direction, player_name, raw_input, client):
             player_health += 1
         else:
             val = "Unfortunately you've found nothing here..."
+        items_gathered_score += 1
         update_info = ["1", "NULL", "NULL", player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, new_x, new_y, "NULL", "NULL", "NULL"]
+        await game_info.force_update(raw_input, update_info)
+        update_info = [str(score_row + 1), "NULL", enemies_killed_score, items_gathered_score, armor_bonuses_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
         await game_info.force_update(raw_input, update_info)
         grid_array[player_y][player_x] = " "
         grid_array[new_y][new_x] = "&"
@@ -352,6 +367,12 @@ async def move_player(direction, player_name, raw_input, client):
         #Grab the player level first so we can send it to generate a new level
         fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
         info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+        for row in range(len(info_array)):
+            if str(info_array[row][1]) == "<":
+                score_row = row
+        enemies_killed_score = int(info_array[score_row][2])
+        items_gathered_score = int(info_array[score_row][3])
+        armor_bonuses_score = int(info_array[score_row][4])
         new_level = int(info_array[0][5]) + 1
         player_strength = int(info_array[0][2]) + 1
         player_health = int(info_array[0][3]) + 2
@@ -371,6 +392,8 @@ async def move_player(direction, player_name, raw_input, client):
             music_val = random.randint(1,15)
             dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
             voice.play(discord.FFmpegPCMAudio(dungeon_song))
+            update_info = [str(score_row + 1), "NULL", enemies_killed_score, items_gathered_score, armor_bonuses_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+            await game_info.force_update(raw_input, update_info)
             update_info = ["1", "NULL", player_strength, player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, "NULL", "NULL", "NULL", "NULL", "NULL"]
             await game_info.force_update(raw_input, update_info)
             await resolve_screen(raw_input)
@@ -430,6 +453,8 @@ async def move_player(direction, player_name, raw_input, client):
                     for val in range(len(info_array[row])):
                         info_array[row][val] = update_array[val]
             await game_info.save_game_stats(raw_input, info_array)
+            update_info = [str(score_row + 1), "NULL", enemies_killed_score, items_gathered_score, armor_bonuses_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+            await game_info.force_update(raw_input, update_info)
             voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
             voice.stop()
             voice.play(discord.FFmpegPCMAudio("./music/final_boss_level"))
@@ -437,6 +462,8 @@ async def move_player(direction, player_name, raw_input, client):
 
 
         elif new_level > 10:
+            #calculate total score and print this out!
+
             await raw_input.channel.send("Brave knight you have made it out of the catacombs!")
             await raw_input.channel.send("Despite your great victory you realize your journey is only just beginning...")
             await raw_input.channel.send("Until you can enter the castle gates would you like to start a *new game*?")
@@ -1089,6 +1116,13 @@ async def battle_round(raw_input, client):
                                     grid_array[y][int(x/2)] = input_grid[y][x]
                         grid_array[door_y][door_x] = "<"
                         numpy.savetxt(fname, input_grid, fmt='%s')
+                        #Grab the game score
+                        for row in range(len(info_array)):
+                            if str(info_array[row][1]) == "<":
+                                score_row = row
+                        enemies_killed_score = int(info_array[score_row][2]) + 1
+                        update_info = [str(score_row + 1), "NULL", enemies_killed_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                        await game_info.force_update(raw_input, update_info)
                     await resolve_screen(raw_input)
                 else:
                     total_enemy_health -= total_player_attack
@@ -1227,6 +1261,13 @@ async def battle_round(raw_input, client):
                                         grid_array[y][int(x/2)] = input_grid[y][x]
                             grid_array[door_y][door_x] = "<"
                             numpy.savetxt(fname, input_grid, fmt='%s')
+                        #Grab the game score
+                        for row in range(len(info_array)):
+                            if str(info_array[row][1]) == "<":
+                                score_row = row
+                        enemies_killed_score = int(info_array[score_row][2]) + 1
+                        update_info = [str(score_row + 1), "NULL", enemies_killed_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                        await game_info.force_update(raw_input, update_info)
                         await resolve_screen(raw_input)
 
                     else:

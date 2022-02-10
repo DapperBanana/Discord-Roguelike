@@ -34,11 +34,13 @@ enemy_list = {
 stats_reader = {
     0 : "entity_val",
     1 : "char_sprite",
-    2 : "strength",
-    3 : "health",
-    4 : "mana",
+    2 : "strength", # '<' = enemies_killed
+    3 : "health",   # '<' = items_gathered
+    4 : "mana",     # '<' = armor_bonuses
     5 : "level",
     6 : "item", #2 is random item, #3 is door, figured I could implement more item types as time goes on
+                #If it's the player their iventory is stored in binary coded decimal
+                #If it's the door, the score is stored here
     7 : "armor",
     8 : "weapon",
     9 : "entity_x",

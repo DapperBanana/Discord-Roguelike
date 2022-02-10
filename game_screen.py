@@ -97,19 +97,29 @@ async def resolve_screen(raw_input):
     #lets get the stats strings ready
     fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
     info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+    for row in range(len(info_array)):
+        if str(info_array[row][1]) == "<":
+            score_row = row
     character_level = int(info_array[0][5])
     health = str(info_array[0][3])
     mana = str(info_array[0][4])
     armour = str(info_array[0][7])
     weapon = str(info_array[0][8])
     attack = str(info_array[0][2])
-    stats_grid = [['     Stats',' '],
-                ['     -----',' '],
-                ['Health :',health],
-                ['Attack :',attack],
-                ['Mana   :',mana],
-                ['Armour :',armour],
-                ['Weapon :',weapon]]
+    enemies_killed_score = int(info_array[score_row][2])
+    items_gathered_score = int(info_array[score_row][3])
+    levels_cleared_score = (character_level - 1) * 100
+    armor_bonuses_score = int(info_array[score_row][4])
+    weapon_bonuses_score = weapon - 1
+    total_score = enemies_killed_score + items_gathered_score + levels_cleared_score + armor_bonuses_score + weapon_bonuses_score
+    stats_grid = [['          Stats',' '],
+                ['          -----',' '],
+                ['Health      :',health],
+                ['Attack      :',attack],
+                ['Mana        :',mana],
+                ['Armour      :',armour],
+                ['Weapon      :',weapon],
+                ['Total Score :',total_score]]
     for y in range(len(game_screen)):
         for x in range(len(game_screen[y])):
             #First lets print the stats on the side and then figure the if statement out for the viewable screen
