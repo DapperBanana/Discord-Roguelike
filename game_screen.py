@@ -110,7 +110,7 @@ async def resolve_screen(raw_input):
     items_gathered_score = int(info_array[score_row][3])
     levels_cleared_score = (character_level - 1) * 100
     armor_bonuses_score = int(info_array[score_row][4])
-    weapon_bonuses_score = weapon - 1
+    weapon_bonuses_score = int(weapon) - 1
     total_score = enemies_killed_score + items_gathered_score + levels_cleared_score + armor_bonuses_score + weapon_bonuses_score
     stats_grid = [['          Stats',' '],
                 ['          -----',' '],
