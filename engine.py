@@ -191,6 +191,8 @@ async def engine(text_input, user_id_info, client):
                                     await resolve_screen(text_input)
                                     if text != "null":
                                         await text_input.channel.send(text)
+                                        if text == "There is a wall there!":
+                                             break
                     else:
                         await text_input.channel.send(command)
                 else:
@@ -1093,6 +1095,13 @@ async def battle_round(raw_input, client):
                     level = int(info_array[0][5])
                     if level < 10:
                         music_val = random.randint(1,15)
+                        #Grab the game score
+                        for row in range(len(info_array)):
+                            if str(info_array[row][1]) == "<":
+                                score_row = row
+                        enemies_killed_score = int(info_array[score_row][2]) + 10
+                        update_info = [str(score_row + 1), "NULL", enemies_killed_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                        await game_info.force_update(raw_input, update_info)
                         dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
                         voice.play(discord.FFmpegPCMAudio(dungeon_song))
                     elif level == 10:
@@ -1120,7 +1129,7 @@ async def battle_round(raw_input, client):
                         for row in range(len(info_array)):
                             if str(info_array[row][1]) == "<":
                                 score_row = row
-                        enemies_killed_score = int(info_array[score_row][2]) + 1
+                        enemies_killed_score = int(info_array[score_row][2]) + 50
                         update_info = [str(score_row + 1), "NULL", enemies_killed_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
                         await game_info.force_update(raw_input, update_info)
                     await resolve_screen(raw_input)
@@ -1238,6 +1247,13 @@ async def battle_round(raw_input, client):
                         level = int(info_array[0][5])
                         if level < 10:
                             music_val = random.randint(1,15)
+                            #Grab the game score
+                            for row in range(len(info_array)):
+                                if str(info_array[row][1]) == "<":
+                                    score_row = row
+                            enemies_killed_score = int(info_array[score_row][2]) + 10
+                            update_info = [str(score_row + 1), "NULL", enemies_killed_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                            await game_info.force_update(raw_input, update_info)
                             dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
                             voice.play(discord.FFmpegPCMAudio(dungeon_song))
                         elif level == 10:
@@ -1261,13 +1277,13 @@ async def battle_round(raw_input, client):
                                         grid_array[y][int(x/2)] = input_grid[y][x]
                             grid_array[door_y][door_x] = "<"
                             numpy.savetxt(fname, input_grid, fmt='%s')
-                        #Grab the game score
-                        for row in range(len(info_array)):
-                            if str(info_array[row][1]) == "<":
-                                score_row = row
-                        enemies_killed_score = int(info_array[score_row][2]) + 1
-                        update_info = [str(score_row + 1), "NULL", enemies_killed_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
-                        await game_info.force_update(raw_input, update_info)
+                            #Grab the game score
+                            for row in range(len(info_array)):
+                                if str(info_array[row][1]) == "<":
+                                    score_row = row
+                            enemies_killed_score = int(info_array[score_row][2]) + 50
+                            update_info = [str(score_row + 1), "NULL", enemies_killed_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
+                            await game_info.force_update(raw_input, update_info)
                         await resolve_screen(raw_input)
 
                     else:
