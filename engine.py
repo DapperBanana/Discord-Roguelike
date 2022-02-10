@@ -394,6 +394,11 @@ async def move_player(direction, player_name, raw_input, client):
             music_val = random.randint(1,15)
             dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
             voice.play(discord.FFmpegPCMAudio(dungeon_song))
+            fname = "./player_files/info_" + str(raw_input.author.id) + ".txt"
+            info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+            for row in range(len(info_array)):
+                if str(info_array[row][1]) == "<":
+                    score_row = row
             update_info = [str(score_row + 1), "NULL", enemies_killed_score, items_gathered_score, armor_bonuses_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
             await game_info.force_update(raw_input, update_info)
             update_info = ["1", "NULL", player_strength, player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, "NULL", "NULL", "NULL", "NULL", "NULL"]
