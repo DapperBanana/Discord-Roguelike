@@ -239,8 +239,10 @@ async def starting_commands(text_input, user_id_info, client):
         await text_input.channel.purge(limit=defaultval)
         #create a new active campaign mission
         #here we'll generate a map
-        await generate_map(text_input, 1)
 
+        map_created_properly = await generate_map(text_input, 1)
+        while map_created_properly:
+            map_created_properly = await generate_map(text_input, 1)
         #Now start the credits
         await text_input.channel.send("New campaign started for: " + str(username))
 
@@ -388,7 +390,9 @@ async def move_player(direction, player_name, raw_input, client):
         await raw_input.channel.purge(limit=defaultval)
         val = "door"
         if new_level < 10:
-            await generate_map(raw_input, new_level)
+            map_created_properly = await generate_map(raw_input, new_level)
+            while map_created_properly:
+                map_created_properly = await generate_map(raw_input, new_level)
             voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
             voice.stop()
             music_val = random.randint(1,15)
