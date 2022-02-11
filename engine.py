@@ -337,7 +337,7 @@ async def move_player(direction, player_name, raw_input, client):
         items_gathered_score = int(info_array[score_row][3])
         armor_bonuses_score = int(info_array[score_row][4])
         levels_cleared_score = (character_level - 1) * 100
-        weapon_bonuses_score = player_weapon - 1
+        weapon_bonuses_score = (player_weapon - 1) * 5
         total_score = enemies_killed_score + items_gathered_score + levels_cleared_score + armor_bonuses_score + weapon_bonuses_score
         percent_chance_of_upgrade = random.randint(0,19)
         if percent_chance_of_upgrade >= 0 and percent_chance_of_upgrade <= 4:
@@ -346,7 +346,7 @@ async def move_player(direction, player_name, raw_input, client):
         elif percent_chance_of_upgrade >= 5 and percent_chance_of_upgrade <= 9:
             val = "You've found a new chestplate and upgraded your armour!"
             player_armor += 1
-            armor_bonuses_score += 1
+            armor_bonuses_score += 5
         elif percent_chance_of_upgrade >= 10 and percent_chance_of_upgrade <= 14:
             val = "You've found a glowing potion and increased your mana!"
             player_mana += 1
@@ -355,7 +355,7 @@ async def move_player(direction, player_name, raw_input, client):
             player_health += 1
         else:
             val = "Unfortunately you've found nothing here..."
-        items_gathered_score += 1
+        items_gathered_score += 5
         update_info = ["1", "NULL", "NULL", player_health, player_mana, "NULL", "NULL", player_armor, player_weapon, new_x, new_y, "NULL", "NULL", "NULL"]
         await game_info.force_update(raw_input, update_info)
         update_info = [str(score_row + 1), "NULL", enemies_killed_score, items_gathered_score, armor_bonuses_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
@@ -460,6 +460,10 @@ async def move_player(direction, player_name, raw_input, client):
                     for val in range(len(info_array[row])):
                         info_array[row][val] = update_array[val]
             await game_info.save_game_stats(raw_input, info_array)
+            info_array = numpy.genfromtxt(fname, dtype=str, delimiter=",")
+            for row in range(len(info_array)):
+                if str(info_array[row][1]) == "<":
+                    score_row = row
             update_info = [str(score_row + 1), "NULL", enemies_killed_score, items_gathered_score, armor_bonuses_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
             await game_info.force_update(raw_input, update_info)
             voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
