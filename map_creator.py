@@ -123,7 +123,7 @@ async def generate_map(raw_data, level):
 
         amount_of_enemies = level * random.randint(1,5)
         amount_of_items = (level * random.randint(1,2)) + 1 #Items spawns are going to be based on the level you're on, and there'll only be one door per level
-        player_info = ["&", "300", "1000", "10", level, "0", "1", "1", player_x, player_y, "0", "-1", "0"]
+        player_info = ["&", "3", "10", "1", level, "0", "1", "1", player_x, player_y, "0", "-1", "0"]
         info_array = [[void for i in range(len(player_info) + 1)] for j in range(amount_of_enemies + amount_of_items + 1)]
         for entity_val in range(amount_of_enemies + amount_of_items + 1):
             info_array[entity_val][0] = str(entity_val + 1)
