@@ -27,19 +27,15 @@ async def on_message(message):
             # Check if the bot has the necessary permissions to connect to a voice channel
             await message.channel.send(str(message.content).lower())
             try:
-                # Check if the bot has the necessary permissions to connect to a voice channel
-                if client.user.guild_permissions.connect and client.user.guild_permissions.speak:
-                    # Get the voice channel by name
-                    voice_channel = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
-        
-                    if voice_channel:
-                        # Connect to the voice channel
-                        voice_channel = await voice_channel.connect()
-                        await message.channel.send(f"Connected to {voice_channel.name}")
-                    else:
-                        await message.channel.send("Voice channel 'the-catacombs-music' not found.")
+                # Get the voice channel by name
+                voice_channel = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
+    
+                if voice_channel:
+                    # Connect to the voice channel
+                    voice_channel = await voice_channel.connect()
+                    await message.channel.send(f"Connected to {voice_channel.name}")
                 else:
-                    await message.channel.send("I don't have the necessary permissions to join a voice channel.")
+                    await message.channel.send("Voice channel 'the-catacombs-music' not found.")
             except Exception as e:
                 await message.channel.send(f"An error occurred: {str(e)}")
         
