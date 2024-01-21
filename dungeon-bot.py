@@ -28,7 +28,7 @@ async def on_message(message):
             await message.channel.send(str(message.content).lower())
             try:
                 # Check if the bot has the necessary permissions to connect to a voice channel
-                if client.guild.me.guild_permissions.connect and client.guild.me.guild_permissions.speak:
+                if client.user.guild_permissions.connect and client.user.guild_permissions.speak:
                     # Get the voice channel by name
                     voice_channel = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
         
