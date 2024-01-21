@@ -3,13 +3,12 @@ import pickle
 import os
 import os.path
 import time
-import engine
 from engine import check_user_id
 from engine import engine
 from discord.ext import commands
 from discord import FFmpegPCMAudio, PCMVolumeTransformer
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.messages = True  # Enable the on_message event
 
 client = commands.Bot(command_prefix='.', intents=intents)
@@ -18,11 +17,9 @@ defaultval = 100
 @client.event
 async def on_message(message):
 
-#
-#    Leave out messages from the Dungeon Bot
-#
     if message.author == client.user:
         return
+    
     if message.channel.name == "the-catacombs":
         print(message.content)
         data_list = await check_user_id(message.author.id)
