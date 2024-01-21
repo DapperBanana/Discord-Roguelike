@@ -251,9 +251,9 @@ async def starting_commands(text_input, user_id_info, client):
         x = [1]
         numpy.savetxt(credits_name, x)
         await game_screen.print_credits(text_input, False, client)
-        voice_channel = discord.utils.get(text_input.guild.voice_channels, name="the-catacombs")
+        voice_channel = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
         await voice_channel.connect()
-        voice = discord.utils.get(client.voice_clients, guild=text_input.guild)
+        voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
         voice.play(discord.FFmpegPCMAudio("./music/intro.mp3"))
 
     elif formatted_text == "continue":
@@ -267,7 +267,7 @@ async def starting_commands(text_input, user_id_info, client):
             await text_input.channel.send("Campaign has been set to active!")
             voice_channel = discord.utils.get(text_input.guild.voice_channels, name="the-catacombs")
             await voice_channel.connect()
-            voice = discord.utils.get(client.voice_clients, guild=text_input.guild)
+            voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
             music_val = random.randint(1,15)
             dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
             voice.play(discord.FFmpegPCMAudio(dungeon_song))
@@ -393,7 +393,7 @@ async def move_player(direction, player_name, raw_input, client):
             map_created_properly = await generate_map(raw_input, new_level)
             while map_created_properly:
                 map_created_properly = await generate_map(raw_input, new_level)
-            voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+            voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
             voice.stop()
             music_val = random.randint(1,15)
             dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
@@ -470,7 +470,7 @@ async def move_player(direction, player_name, raw_input, client):
                     score_row = row
             update_info = [str(score_row + 1), "NULL", enemies_killed_score, items_gathered_score, armor_bonuses_score, "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL", "NULL"]
             await game_info.force_update(raw_input, update_info)
-            voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+            voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
             voice.stop()
             voice.play(discord.FFmpegPCMAudio("./music/final_boss_level"))
 
@@ -547,7 +547,7 @@ async def input_parse(raw_input, client):
                 if os.path.exists(file_name):
                     os.rename(file_name, new_name)
                     message_to_send =  "Campaign has been paused! Until next time!"
-                    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                    voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
                     voice.stop()
                     await voice.disconnect()
 
@@ -561,7 +561,7 @@ async def input_parse(raw_input, client):
                     os.remove(game_file)
                     os.remove(game_info_file)
                     message_to_send = "Campaign has ended! Safe travels"
-                voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
                 voice.stop()
                 await voice.disconnect()
             elif formatted_input == "enter":
@@ -828,7 +828,7 @@ async def start_battle(initiate, raw_input, client):
         if row > 0 and int(info_array[row][13]) == 1:
             entity_val = int(info_array[row][0])
     entity_char = str(info_array[entity_val-1][1])
-    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+    voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
     voice.stop()
     player_level = int(info_array[0][5])
     if player_level < 10:
@@ -1103,7 +1103,7 @@ async def battle_round(raw_input, client):
                     await game_info.force_update(raw_input, update_info)
                     fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
                     os.remove(fname)
-                    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                    voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
                     voice.stop()
                     level = int(info_array[0][5])
                     if level < 10:
@@ -1159,7 +1159,7 @@ async def battle_round(raw_input, client):
                         fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
                         os.remove(fname)
                         await raw_input.channel.purge(limit=defaultval)
-                        voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                        voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
                         voice.stop()
                         await voice.disconnect()
                         f = open("./game_screens/death.txt", 'r')
@@ -1206,7 +1206,7 @@ async def battle_round(raw_input, client):
                     fname = "./player_files/active_" + str(raw_input.author.id) + ".txt"
                     os.remove(fname)
                     await raw_input.channel.purge(limit=defaultval)
-                    voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                    voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
                     voice.stop()
                     await voice.disconnect()
                     f = open("./game_screens/death.txt", 'r')
@@ -1255,7 +1255,7 @@ async def battle_round(raw_input, client):
                         await game_info.force_update(raw_input, update_info)
                         fname = "./player_files/battle_" + str(raw_input.author.id) + ".txt"
                         os.remove(fname)
-                        voice = discord.utils.get(client.voice_clients, guild=raw_input.guild)
+                        voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
                         voice.stop()
                         level = int(info_array[0][5])
                         if level < 10:
