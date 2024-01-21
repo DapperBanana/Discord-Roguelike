@@ -12,7 +12,7 @@ from discord import FFmpegPCMAudio, PCMVolumeTransformer
 intents = discord.Intents.default()
 intents.messages = True  # Enable the on_message event
 
-client = commands.Bot(command_prefix=None, intents=intents)
+client = commands.Bot(command_prefix='.', intents=intents)
 defaultval = 100
 
 @client.event
@@ -21,12 +21,9 @@ async def on_message(message):
 #
 #    Leave out messages from the Dungeon Bot
 #
-    print(message)
-    print(message.content)
     if message.author == client.user:
         return
     if message.channel.name == "the-catacombs":
-        print(message)
         print(message.content)
         data_list = await check_user_id(message.author.id)
         await engine(message, data_list, client)
@@ -39,6 +36,10 @@ async def on_ready():
 async def clear(ctx, amount=30):
     await ctx.channel.purge(limit=amount)
 
+@client.command()
+async def hello(ctx):
+    await ctx.channel.send(f'hello there {ctx.author.mention}')
+
 text_file = open("/home/pi/Info.txt", "r")
-client_secret = text_file.read()
-client.run(client_secret)
+bot_token = text_file.read()
+client.run(bot_token)
