@@ -23,7 +23,7 @@ async def on_message(message):
     
     if message.channel.name == "the-catacombs":
 
-        if message.content.startswith('joinmusic'):  # Replace with your desired command prefix and command
+        if str(message.content).lower() == "join music":  # Replace with your desired command prefix and command
             # Check if the bot has the necessary permissions to connect to a voice channel
             if message.guild.me.guild_permissions.connect and message.guild.me.guild_permissions.speak:
                 # Get the voice channel by name
