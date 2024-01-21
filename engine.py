@@ -265,8 +265,8 @@ async def starting_commands(text_input, user_id_info, client):
         if os.path.exists(file_name):
             os.rename(file_name, new_name)
             await text_input.channel.send("Campaign has been set to active!")
-            voice_channel = discord.utils.get(text_input.guild.voice_channels, name="the-catacombs")
-            await voice_channel.connect()
+            voice = discord.utils.get(text_input.guild.voice_channels, name="the-catacombs-music")
+            await voice.connect()
             voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
             music_val = random.randint(1,15)
             dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
