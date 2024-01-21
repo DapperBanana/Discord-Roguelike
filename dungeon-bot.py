@@ -21,7 +21,14 @@ async def on_message(message):
         return
     
     if message.channel.name == "the-catacombs":
-        print(message.content)
+        if message.content.startswith('!play'):
+            voice_channel = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
+    
+            if voice_channel:
+                voice = await voice_channel.connect()
+                voice.play(discord.FFmpegPCMAudio('./music/dungeon_4.mp3'))
+            else:
+                await message.channel.send('I cannot find the voice channel named "the-catacombs-music".')
         data_list = await check_user_id(message.author.id)
         await engine(message, data_list, client)
 
