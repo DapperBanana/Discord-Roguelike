@@ -1,8 +1,9 @@
 name: The Catacombs
 
 on:
-  pull_request:
-    branches: [ main ]
+  push:
+    branches: 
+      - main
 jobs:
   build:
     runs-on: self-hosted
