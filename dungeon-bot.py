@@ -12,7 +12,7 @@ from discord import FFmpegPCMAudio, PCMVolumeTransformer
 intents = discord.Intents.default()
 intents.messages = True  # Enable the on_message event
 
-client = commands.Bot(command_prefix = '.', intents=intents)
+client = commands.Bot(command_prefix=None, intents=intents)
 defaultval = 100
 
 @client.event
