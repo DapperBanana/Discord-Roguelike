@@ -9,7 +9,10 @@ from engine import engine
 from discord.ext import commands
 from discord import FFmpegPCMAudio, PCMVolumeTransformer
 
-client = commands.Bot(command_prefix = '.')
+intents = discord.Intents.default()
+intents.messages = True  # Enable the on_message event
+
+client = commands.Bot(command_prefix = '.', intents=intents)
 defaultval = 100
 
 @client.event
@@ -19,7 +22,7 @@ async def on_message(input):
 #    Leave out messages from the Dungeon Bot
 #
     if str(input.author.id) != "920859015146246184":
-        if str(input.channel) == "bot-playground":
+        if str(input.channel) == "the-catacombs":
             data_list = await check_user_id(input.author.id)
             await engine(input, data_list, client)
 
