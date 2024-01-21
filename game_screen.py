@@ -168,7 +168,7 @@ async def print_credits(raw_data, skip_bool, client):
             await raw_data.channel.send("Now brave knight you must *enter* the catacombs!")
             #We want to delete the credits page
             os.remove(file_name)
-            voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
+            voice = discord.utils.get(raw_data.guild.voice_channels, name="the-catacombs-music")
             voice.stop()
             music_val = random.randint(1,15)
             dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
@@ -184,7 +184,7 @@ async def print_credits(raw_data, skip_bool, client):
         await raw_data.channel.send("Now brave knight you must *enter* the catacombs!")
         #Lastly we need to delete the credits page
         os.remove(file_name)
-        voice = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
+        voice = discord.utils.get(raw_data.guild.voice_channels, name="the-catacombs-music")
         voice.stop()
         music_val = random.randint(1,15)
         dungeon_song = "./music/dungeon_" + str(music_val) + ".mp3"
