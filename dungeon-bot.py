@@ -35,5 +35,5 @@ async def clear(ctx, amount=30):
     await ctx.channel.purge(limit=amount)
 
 text_file = open("/home/pi/Info.txt", "r")
-client_secret = text_file.read(59)
+client_secret = "aJQy2dmyPG2oJrt1D9jPwQrwiF_I8GgP"
 client.run(client_secret)
