@@ -21,9 +21,12 @@ async def on_message(message):
 #
 #    Leave out messages from the Dungeon Bot
 #
+    print(message)
+    print(message.content)
     if message.author == client.user:
         return
     if message.channel.name == "the-catacombs":
+        print(message)
         print(message.content)
         data_list = await check_user_id(message.author.id)
         await engine(message, data_list, client)
