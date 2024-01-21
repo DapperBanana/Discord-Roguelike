@@ -1,0 +1,22 @@
+name: The Catacombs
+
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - name: Display Python version
+      run: python --version
+  deployment:
+    runs-on: self-hosted
+    steps: 
+    - name: Kill script then clone repo then run bot
+      run: |
+        sudo pkill -f dungeon-bot.py || true
+        sudo rm -rf /home/pi/Discord-Roguelike
+        sudo git clone https://github.com/Captain-Howard/Discord-Roguelike.git /home/pi/Discord-Roguelike/
+        cd /home/pi/Discord-Roguelike/
+        sudo mkdir -p ./player_files
+        sudo python /home/pi/Discord-Roguelike/dungeon-bot.py &
