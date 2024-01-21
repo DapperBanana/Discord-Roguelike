@@ -22,14 +22,22 @@ async def on_message(message):
         return
     
     if message.channel.name == "the-catacombs":
-        if message.content.startswith('!play'):
-            voice_channel = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
+
+        if message.content.startswith('joinmusic'):  # Replace with your desired command prefix and command
+            # Check if the bot has the necessary permissions to connect to a voice channel
+            if message.guild.me.guild_permissions.connect and message.guild.me.guild_permissions.speak:
+                # Get the voice channel by name
+                voice_channel = discord.utils.get(message.guild.voice_channels, name="the-catacombs-music")
     
-            if voice_channel:
-                voice = await voice_channel.connect()
-                voice.play(discord.FFmpegPCMAudio('./music/dungeon_4.mp3'))
+                if voice_channel:
+                    # Connect to the voice channel
+                    voice_channel = await voice_channel.connect()
+                    await message.channel.send(f"Connected to {voice_channel.name}")
+                else:
+                    await message.channel.send("Voice channel 'the-catacombs-music' not found.")
             else:
-                await message.channel.send('I cannot find the voice channel named "the-catacombs-music".')
+                await message.channel.send("I don't have the necessary permissions to join a voice channel.")
+        
         data_list = await check_user_id(message.author.id)
         await engine(message, data_list, client)
 
