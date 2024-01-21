@@ -16,15 +16,16 @@ client = commands.Bot(command_prefix=None, intents=intents)
 defaultval = 100
 
 @client.event
-async def on_message(input):
+async def on_message(message):
 
 #
 #    Leave out messages from the Dungeon Bot
 #
-    if str(input.author.id) != "920859015146246184":
-        if str(input.channel) == "the-catacombs":
-            data_list = await check_user_id(input.author.id)
-            await engine(input, data_list, client)
+    if message.author == client.user:
+        return
+    if message.channel.name == "the-catacombs":
+        data_list = await check_user_id(message.author.id)
+        await engine(message, data_list, client)
 
 @client.event
 async def on_ready():
