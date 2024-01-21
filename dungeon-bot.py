@@ -24,6 +24,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     if message.channel.name == "the-catacombs":
+        print(message.content)
         data_list = await check_user_id(message.author.id)
         await engine(message, data_list, client)
 
